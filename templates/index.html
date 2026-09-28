@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Proyeksi Iklim</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --text: #333333;
+      --muted: #666666;
+      --border: #d1d5db;
+      --accent: #9b1c1c;
+      --accent-dark: #771d1d;
+      --accent-light: #fdf2f2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ---------- Top bar & Brand ---------- */
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      color: var(--accent);
+    }
+
+    .brand h1 {
+      font-size: 1.1rem;
+      margin: 0;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .brand .collapse-btn {
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    #map-header {
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    #topbar-title {
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--text);
+      padding: 12px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #topbar-meta {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px 12px 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    #topbar-meta span:not(:last-child) {
+      border-right: 1px solid var(--border);
+      padding-right: 20px;
+    }
+
+    #topbar-meta b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ---------- Main layout ---------- */
+    #layout {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+
+    #sidebar {
+      width: 320px;
+      flex: 0 0 auto;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 20px 24px;
+      overflow-y: auto;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+      z-index: 10;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    select,
+    input[type=number],
+    input[type=range] {
+      width: 100%;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    select:focus {
+      border-color: var(--accent);
+    }
+
+    .colorbar-container {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .unit-lbl {
+      font-size: 0.9rem;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    .colorbar-wrapper {
+      position: relative;
+    }
+    .colorbar-inputs {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      padding: 0 4px;
+    }
+    .bare-input {
+      width: 60px;
+      padding: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      font-size: 0.95rem !important;
+      color: #1f2937 !important;
+      font-weight: 500;
+    }
+    .bare-input:focus {
+      outline: none !important;
+    }
+    .bare-input::-webkit-outer-spin-button,
+    .bare-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .bare-input[type=number] {
+      -moz-appearance: textfield;
+    }
+    .colorbar-track-area {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 0 4px;
+    }
+    .colorbar-bridge {
+      background: #e9ecef;
+      height: 16px;
+    }
+    .colorbar-knobs {
+      position: relative;
+      height: 14px;
+    }
+    .colorbar-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 5px;
+      height: 4px;
+      background: #4b5563;
+      border-radius: 2px;
+    }
+    .colorbar-knob {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #1f2937;
+      z-index: 2;
+      cursor: pointer;
+    }
+    #colorbar-strip {
+      height: 24px;
+      border-radius: 0 0 6px 6px;
+      background: linear-gradient(to right, #053061, #2166ac, #4393c3, #92c5de, #d1e5f0, #f7f7f7, #fddbc7, #f4a582, #d6604d, #b2182b, #67001f);
+    }
+    .colorbar-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: #1f2937;
+      margin-top: 6px;
+      padding: 0 2px;
+    }
+    #palette-controls {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .control-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85rem;
+      color: #4b5563;
+      cursor: pointer;
+    }
+    .control-btn:hover {
+      color: #111827;
+    }
+
+    #palette-toggle {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    #palette-toggle button {
+      flex: 1;
+      font-size: 0.78rem;
+      padding: 6px 4px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    #palette-toggle button.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    #opacity-row {
+      margin-top: 14px;
+    }
+
+    #opacity-row .range-row {
+      margin-top: 2px;
+    }
+
+    /* ---------- Map area ---------- */
+    #maparea {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    #map {
+      flex: 1;
+      min-height: 300px;
+      background: #dce3e8;
+    }
+
+    .leaflet-container {
+      font-family: inherit;
+    }
+
+    .leaflet-top.leaflet-left {
+      margin-top: 90px;
+    }
+
+    #status {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      z-index: 1000;
+    }
+
+    #status.error {
+      color: #b91c1c;
+    }
+
+    #status:empty {
+      display: none;
+    }
+
+    #timeline {
+      flex: 0 0 auto;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      padding: 16px 24px 36px 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    #timeline-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #timeline .timeline-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #timeline-track {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0;
+      height: 24px;
+      margin: 0 40px;
+    }
+
+    #timeline-track .line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      background: #ebd8d8;
+      z-index: 1;
+      border-radius: 2px;
+    }
+
+    #timeline-track .line-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: #4a4a4a;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .tl-point {
+      position: relative;
+      width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .tl-point .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid #4a4a4a;
+      box-sizing: border-box;
+      transition: all 0.2s;
+    }
+
+    .tl-point .lbl {
+      position: absolute;
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .tl-point .lbl.lbl-top {
+      bottom: 22px;
+    }
+
+    .tl-point .lbl.lbl-bottom {
+      top: 22px;
+    }
+
+    .tl-point.active .dot {
+      background: #901a1e;
+      border-color: #901a1e;
+    }
+
+    .tl-point.active .lbl {
+      color: #901a1e;
+      font-weight: 600;
+    }
+
+    .tl-point.future-active .dot {
+      border-color: #ebd8d8;
+    }
+
+    #scenario-wrap {
+      flex: 0 0 auto;
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #scenario-wrap select {
+      width: auto;
+      min-width: 200px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      background: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="layout">
+    <div id="sidebar">
+      <div class="brand">
+        <h1>Interactive Climate Atlas</h1>
+        <div class="collapse-btn">&laquo;</div>
+      </div>
+
+      <div class="field" style="display:none;">
+        <label>Kategori (Internal)</label>
+        <select id="sel-kategori"></select>
+      </div>
+
+      <div class="field">
+        <label>Select a variable:</label>
+        <select id="sel-variabel"></select>
+      </div>
+
+      <div class="field">
+        <label>Select a dataset:</label>
+        <select id="sel-dataset"></select>
+      </div>
+
+      <div class="field">
+        <label>Select a model:</label>
+        <select id="sel-model"></select>
+      </div>
+
+      <div class="field">
+        <label>Quantity:</label>
+        <select id="sel-jenis"></select>
+      </div>
+
+      <div class="colorbar-container" style="margin-top: 24px;">
+        <div class="unit-lbl">Units: <span id="lbl-unit">°C</span></div>
+        <div class="colorbar-wrapper">
+          <div class="colorbar-inputs">
+            <input type="number" id="in-min" step="any" class="bare-input" style="text-align:left;" value="-6">
+            <input type="number" id="in-max" step="any" class="bare-input" style="text-align:right;" value="6">
+          </div>
+          <div class="colorbar-track-area">
+            <div class="colorbar-knobs" id="cb-knobs">
+              <div class="colorbar-line"></div>
+              <div class="colorbar-knob" id="cb-knob-left" style="position:absolute; top:0; left:0; transform:translateX(-50%);"></div>
+              <div class="colorbar-knob" id="cb-knob-right" style="position:absolute; top:0; left:100%; transform:translateX(-50%);"></div>
+            </div>
+            <div class="colorbar-bridge" style="clip-path:polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);"></div>
+            <div id="colorbar-strip"></div>
+          </div>
+        </div>
+        <div id="colorbar-ticks" class="colorbar-ticks"></div>
+        <div id="palette-controls" style="position:relative;">
+           <div class="control-btn" id="btn-palette" onclick="const p = document.getElementById('palette-popup'); p.style.display = p.style.display === 'none' ? 'block' : 'none'; event.stopPropagation();">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 0 1-6.77-14.86c.21-.24.56-.2.72.07.6 1.05 1.5 2.5 3 2.5s2.5-1.5 2.5-3c0-.6-.35-1.12-.87-1.3A9.03 9.03 0 0 1 12 3a9 9 0 1 1 0 18z"></path></svg>
+              <span>Palette</span>
+           </div>
+           <div class="control-btn" id="btn-autofit" onclick="autoRange=true; if(lastPayload) drawOverlay(lastPayload);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="8 8 4 12 8 16"></polyline><polyline points="16 16 20 12 16 8"></polyline></svg>
+              <span>Autofit</span>
+           </div>
+           <div class="control-btn" id="btn-reset" onclick="autoRange=true; if(lastPayload) drawOverlay(lastPayload);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
+              <span>Reset</span>
+           </div>
+
+           <div id="palette-popup" onclick="event.stopPropagation();" style="display:none; position:absolute; top:calc(100% + 8px); left:0; background:#fff; border:1px solid #d1d5db; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.15); padding:10px; z-index:9999; width: 180px;">
+              <div class="palette-list" id="palette-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+              <hr style="border:none; border-top:1px solid #e5e7eb; margin:10px 0;">
+              <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; color:#374151; cursor:pointer;">
+                 <input type="checkbox" id="chk-discrete" onchange="if(lastPayload) drawOverlay(lastPayload);"> Discrete
+              </label>
+           </div>
+        </div>
+        <div id="opacity-row" style="margin-top:16px;">
+          <label style="font-size:0.78rem; color:var(--muted);">Opacity layer</label>
+          <input type="range" id="in-opacity" min="0.1" max="1" step="0.05" value="0.8">
+        </div>
+      </div>
+    </div>
+
+    <div id="maparea">
+      <div id="map-header">
+        <div id="topbar-title"></div>
+        <div id="topbar-meta"></div>
+      </div>
+      <div id="status"></div>
+      <div id="map"></div>
+
+      
+      <div id="timeline">
+        <div id="timeline-left">
+          <div class="timeline-label" id="timeline-title">Periode</div>
+          <div id="timeline-track">
+            <div class="line"><div class="line-fill" id="track-fill"></div></div>
+          </div>
+        </div>
+        <div id="scenario-wrap">
+          <select id="sel-skenario"></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let OPTIONS = {};
+    let currentPalette = 'rdbu';
+    let manualPalette = false;
+    let autoRange = true;
+    let sliderTrackMin = 0;
+    let sliderTrackMax = 10;
+    let lastPayload = null;
+    let map = null;
+    let currentOverlay = null;
+
+    /* ---------- Peta dasar (Leaflet) ---------- */
+    function initMap() {
+      map = L.map('map', { zoomControl: true, worldCopyJump: true }).setView([0, 115], 5);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }).addTo(map);
+    }
+
+    /* ---------- Colormap ---------- */
+    const PALETTES = {
+      rdbu: ['#053061', '#2166ac', '#4393c3', '#92c5de', '#d1e5f0', '#f7f7f7', '#fddbc7', '#f4a582', '#d6604d', '#b2182b', '#67001f'],
+      prgn: ['#40004b', '#762a83', '#9970ab', '#c2a5cf', '#e7d4e8', '#f7f7f7', '#d9f0d3', '#a6dba0', '#5aae61', '#1b7837', '#00441b'],
+      brbg: ['#543005', '#8c510a', '#bf812d', '#dfc27d', '#f6e8c3', '#f5f5f5', '#c7eae5', '#80cdc1', '#35978f', '#01665e', '#003c30'],
+      piyg: ['#8e0152', '#c51b7d', '#de77ae', '#f1b6da', '#fde0ef', '#f7f7f7', '#e6f5d0', '#b8e186', '#7fbc41', '#4d9221', '#276419'],
+      puor: ['#7f3b08', '#b35806', '#e08214', '#fdb863', '#fee0b6', '#f7f7f7', '#d8daeb', '#b2abd2', '#8073ac', '#542788', '#2d004b'],
+      viridis: ['#440154', '#482878', '#3e4a89', '#31688e', '#26828e', '#1f9e89', '#35b779', '#6ece58', '#b5de2b', '#fde725'],
+      plasma: ['#0d0887', '#46039f', '#7201a8', '#9c179e', '#bd3786', '#d8576b', '#ed7953', '#fb9f3a', '#fdca26', '#f0f921'],
+      jet: ['#000083', '#0000ff', '#00ffff', '#80ff80', '#ffff00', '#ff0000', '#800000']
+    };
+
+    function hexToRgb(hex) {
+      const v = parseInt(hex.slice(1), 16);
+      return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+    }
+
+    function colormap(paletteName, t, isDiscrete) {
+      const stops = PALETTES[paletteName] || PALETTES.rdbu;
+      t = Math.max(0, Math.min(1, t));
+      if (isDiscrete) {
+         const idx = Math.min(stops.length - 1, Math.floor(t * stops.length));
+         return hexToRgb(stops[idx]);
+      }
+      const n = stops.length - 1;
+      const pos = t * n;
+      const i = Math.min(n - 1, Math.floor(pos));
+      const frac = pos - i;
+      const c0 = hexToRgb(stops[i]);
+      const c1 = hexToRgb(stops[i + 1]);
+      return [
+        Math.round(c0[0] + (c1[0] - c0[0]) * frac),
+        Math.round(c0[1] + (c1[1] - c0[1]) * frac),
+        Math.round(c0[2] + (c1[2] - c0[2]) * frac)
+      ];
+    }
+
+    function paletteGradientCss(paletteName, isDiscrete) {
+      const stops = PALETTES[paletteName] || PALETTES.rdbu;
+      if (!isDiscrete) return `linear-gradient(to right, ${stops.join(',')})`;
+      let css = 'linear-gradient(to right, ';
+      const step = 100 / stops.length;
+      stops.forEach((c, i) => {
+         css += `${c} ${i*step}%, ${c} ${(i+1)*step}%`;
+         if (i < stops.length - 1) css += ', ';
+      });
+      css += ')';
+      return css;
+    }
+
+    /* ---------- UI helpers ---------- */
+    function setStatus(msg, isError) {
+      const el = document.getElementById('status');
+      el.textContent = msg || '';
+      el.className = isError ? 'error' : '';
+    }
+
+    function getLabel(type, key) {
+      if (UI_CONFIG && UI_CONFIG[`${type}_labels`] && UI_CONFIG[`${type}_labels`][key]) {
+        return UI_CONFIG[`${type}_labels`][key];
+      }
+      return key;
+    }
+
+    function fillSelect(sel, keys, keepValue, type) {
+      const prev = sel.value;
+      sel.innerHTML = '';
+      keys.forEach(k => {
+        const opt = document.createElement('option');
+        opt.value = k;
+        let text = type ? getLabel(type, k) : k;
+        if (sel.id === 'sel-jenis') {
+          text = text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+        }
+        opt.textContent = text;
+        sel.appendChild(opt);
+      });
+      if (keepValue && keys.includes(prev)) {
+        sel.value = prev;
+      } else if (keys.length > 0) {
+        sel.value = keys[0];
+      }
+    }
+
+    function isHistorical(skenario) {
+      return /historical|baseline|observasi/i.test(skenario);
+    }
+
+    function currentSkenarioGroup() {
+      const kategori = document.getElementById('sel-kategori').value;
+      const variabel = document.getElementById('sel-variabel').value;
+      const allSkenario = Object.keys(((OPTIONS[kategori] || {})[variabel]) || {});
+      const historicalKeys = allSkenario.filter(isHistorical);
+      const futureKeys = allSkenario.filter(s => !isHistorical(s));
+      return { historicalKeys, futureKeys };
+    }
+
+    function activeSkenario() {
+      const selSk = document.getElementById('sel-skenario');
+      if (selSk && selSk.value) return selSk.value;
+      
+      const kategori = document.getElementById('sel-kategori').value;
+      const variabel = document.getElementById('sel-variabel').value;
+      const { historicalKeys, futureKeys } = currentSkenarioGroup();
+      return historicalKeys[0] || futureKeys[0] || Object.keys(((OPTIONS[kategori] || {})[variabel]) || {})[0];
+    }
+
+    function renderTimeline() {
+      const kategori = document.getElementById('sel-kategori').value;
+      const variabel = document.getElementById('sel-variabel').value;
+      const { historicalKeys, futureKeys } = currentSkenarioGroup();
+      const scenarioWrap = document.getElementById('scenario-wrap');
+
+      if (!scenarioWrap.dataset.active) {
+        scenarioWrap.dataset.active = historicalKeys.length ? 'historical' : 'future';
+      }
+
+      const combinedKeys = [...historicalKeys, ...futureKeys];
+      if (combinedKeys.length > 0) {
+        scenarioWrap.style.display = 'flex';
+        fillSelect(document.getElementById('sel-skenario'), combinedKeys, true, 'scenario');
+      } else {
+        scenarioWrap.style.display = 'none';
+      }
+
+      const skenario = activeSkenario();
+      const periodeKeys = Object.keys((((OPTIONS[kategori] || {})[variabel]) || {})[skenario] || {});
+
+      const track = document.getElementById('timeline-track');
+      track.innerHTML = '<div class="line"><div class="line-fill" id="track-fill"></div></div>';
+
+      let pointsData = [];
+      const histSkenario = historicalKeys[0] || 'historical';
+      const histPeriods = Object.keys((((OPTIONS[kategori] || {})[variabel]) || {})[histSkenario] || {});
+      
+      const anyFutureSkenario = futureKeys[0];
+      const futurePeriodeKeys = Object.keys((((OPTIONS[kategori] || {})[variabel]) || {})[anyFutureSkenario] || {});
+
+      // 1. Historical references
+      ['1981_2010', '1991_2020'].forEach(p => {
+        if (histPeriods.includes(p)) {
+          pointsData.push({ type: 'hist', id: p, label: p.replace('_', '-'), position: 'top' });
+        }
+      });
+
+      // 2. Future periods
+      ['2021_2050', '2071_2100'].forEach(p => {
+        if (futurePeriodeKeys.includes(p)) {
+          pointsData.push({ type: 'future', id: p, label: p.replace('_', '-'), position: 'bottom' });
+        }
+      });
+
+      // 3. Quick Scenario Buttons
+      const scenarioMap = {
+        'ssp126': '1.5°C',
+        'ssp245': '2°C',
+        'ssp370': '3°C',
+        'ssp585': '4°C'
+      };
+      const sspOrder = ['ssp126', 'ssp245', 'ssp370', 'ssp585'];
+      sspOrder.forEach((sk, idx) => {
+         if (futureKeys.includes(sk)) {
+            pointsData.push({ 
+              type: 'quick_skenario', 
+              id: sk, 
+              label: scenarioMap[sk], 
+              position: (idx % 2 === 0 ? 'top' : 'bottom'),
+              isActiveScenario: (scenarioWrap.dataset.active === 'future' && sk === skenario)
+            });
+         }
+      });
+
+      pointsData.forEach((pd) => {
+        const pt = document.createElement('div');
+        pt.className = 'tl-point';
+        pt.dataset.type = pd.type;
+        pt.dataset.id = pd.id;
+        
+        const lblClass = 'lbl-bottom';
+        pt.innerHTML = `<div class="dot"></div><div class="lbl ${lblClass}">${pd.label}</div>`;
+        
+        if (pd.isActiveScenario) {
+          pt.querySelector('.dot').style.borderColor = '#901a1e';
+          pt.querySelector('.lbl').style.color = '#901a1e';
+          pt.querySelector('.lbl').style.fontWeight = '600';
+        }
+
+        pt.onclick = () => {
+          if (pd.type === 'hist') {
+            if (scenarioWrap.dataset.active === 'future') {
+              activeRef = pd.id;
+              renderTimeline();
+              loadPlot();
+            } else {
+              activeHist = pd.id;
+              renderTimeline();
+              loadPlot();
+            }
+          } else if (pd.type === 'future') {
+            scenarioWrap.dataset.active = 'future';
+            activeProj = pd.id;
+            renderTimeline();
+            loadPlot();
+          } else if (pd.type === 'quick_skenario') {
+            scenarioWrap.dataset.active = 'future';
+            document.getElementById('sel-skenario').value = pd.id;
+            renderTimeline();
+            loadPlot();
+          }
+        };
+        track.appendChild(pt);
+      });
+
+      updateActivePointsUI();
+    }
+
+    let activeRef = '1981_2010';
+    let activeProj = '2021_2050';
+    let activeHist = '1981_2010';
+
+    function getCombinedPeriode() {
+      const projMap = { '2021_2050': '2150', '2071_2100': '7100' };
+      const refMap = { '1981_2010': '8110', '1991_2020': '9120' };
+      return (projMap[activeProj] || activeProj) + '_' + (refMap[activeRef] || activeRef);
+    }
+
+
+    function updateActivePointsUI() {
+      const points = Array.from(document.querySelectorAll('.tl-point'));
+      const isFuture = (document.getElementById('scenario-wrap').dataset.active === 'future');
+      
+      let activeIdx = 0;
+      points.forEach((el, idx) => {
+        let isActive = false;
+        if (isFuture) {
+           isActive = (el.dataset.id === activeRef && el.dataset.type === 'hist') || 
+                      (el.dataset.id === activeProj && el.dataset.type === 'future');
+        } else {
+           isActive = (el.dataset.id === activeHist && el.dataset.type === 'hist');
+        }
+        el.classList.toggle('active', isActive);
+        if (isActive && (el.dataset.type === 'future' || (!isFuture && el.dataset.type === 'hist'))) {
+           activeIdx = idx;
+        }
+      });
+
+      points.forEach((el, idx) => {
+         el.classList.toggle('past-active', idx < activeIdx);
+         el.classList.toggle('future-active', idx > activeIdx);
+      });
+
+      const fill = document.getElementById('track-fill');
+      if (fill) {
+        if (points.length > 1) {
+          const pct = (activeIdx / (points.length - 1)) * 100;
+          fill.style.width = pct + '%';
+        } else {
+          fill.style.width = '0%';
+        }
+      }
+
+      updateJenisModel();
+    }
+
+    function getActivePeriode() {
+      const isFuture = (document.getElementById('scenario-wrap').dataset.active === 'future');
+      if (!isFuture) return activeHist;
+      
+      const kategori = document.getElementById('sel-kategori').value;
+      const variabel = document.getElementById('sel-variabel').value;
+      const skenario = activeSkenario();
+      const jenis = document.getElementById('sel-jenis').value;
+      
+      const periodObj = (((OPTIONS[kategori] || {})[variabel] || {})[skenario] || {});
+      const combined = getCombinedPeriode();
+      
+      if (jenis && periodObj[combined] && periodObj[combined][jenis]) {
+         return combined;
+      }
+      return activeProj;
+    }
+
+    let currentDatasetMap = {};
+
+    function updateJenisModel() {
+      const kategori = document.getElementById('sel-kategori').value;
+      const variabel = document.getElementById('sel-variabel').value;
+      const skenario = activeSkenario();
+      
+      const periodObj = (((OPTIONS[kategori] || {})[variabel] || {})[skenario] || {});
+      
+      let allJenis = new Set();
+      const isFuture = (document.getElementById('scenario-wrap').dataset.active === 'future');
+      const combined = getCombinedPeriode();
+
+      if (!isFuture && periodObj[activeHist]) {
+         Object.keys(periodObj[activeHist]).forEach(j => allJenis.add(j));
+      }
+      if (isFuture && periodObj[activeProj]) {
+         Object.keys(periodObj[activeProj]).forEach(j => allJenis.add(j));
+      }
+      if (isFuture && periodObj[combined]) {
+         Object.keys(periodObj[combined]).forEach(j => allJenis.add(j));
+      }
+      
+      const currentJenis = document.getElementById('sel-jenis').value;
+      const jenisKeys = Array.from(allJenis).sort();
+      fillSelect(document.getElementById('sel-jenis'), jenisKeys, true);
+      
+      if (jenisKeys.includes(currentJenis)) {
+         document.getElementById('sel-jenis').value = currentJenis;
+      }
+
+      updateDatasetModel();
+    }
+
+    function updateDatasetModel() {
+      const kategori = document.getElementById('sel-kategori').value;
+      const variabel = document.getElementById('sel-variabel').value;
+      const skenario = activeSkenario();
+      const periode = getActivePeriode();
+      const jenis = document.getElementById('sel-jenis').value;
+      if (!jenis) return;
+
+      const modelKeys = Object.keys(((((OPTIONS[kategori] || {})[variabel] || {})[skenario] || {})[periode] || {})[jenis] || {});
+
+      currentDatasetMap = {};
+      const mapping = (UI_CONFIG && UI_CONFIG.dataset_categories) ? UI_CONFIG.dataset_categories : {};
+
+      modelKeys.forEach(m => {
+        let foundDs = "Uncategorized";
+        for (const [ds, models] of Object.entries(mapping)) {
+          if (models.includes(m)) {
+            foundDs = ds;
+            break;
+          }
+        }
+        if (!currentDatasetMap[foundDs]) currentDatasetMap[foundDs] = [];
+        currentDatasetMap[foundDs].push(m);
+      });
+
+      const availableDatasets = Object.keys(currentDatasetMap).sort();
+      fillSelect(document.getElementById('sel-dataset'), availableDatasets, true);
+
+      updateModelDropdown();
+    }
+
+    function updateModelDropdown() {
+      const ds = document.getElementById('sel-dataset').value;
+      const models = currentDatasetMap[ds] || [];
+      fillSelect(document.getElementById('sel-model'), models, true);
+    }
+
+    /* ---------- Load data & render overlay ---------- */
+    let UI_CONFIG = {};
+
+    async function loadOptions() {
+      setStatus('Memuat daftar data...');
+      const [res, confRes] = await Promise.all([
+        fetch('/api/options'),
+        fetch('/api/ui_config')
+      ]);
+      OPTIONS = await res.json();
+      UI_CONFIG = await confRes.json();
+      const kategoriKeys = Object.keys(OPTIONS);
+      if (kategoriKeys.length === 0) {
+        setStatus('Tidak ada data ditemukan. Periksa DATA_ROOTS di server.', true);
+        return;
+      }
+      fillSelect(document.getElementById('sel-kategori'), kategoriKeys, false);
+      const variabelKeys = Object.keys(OPTIONS[document.getElementById('sel-kategori').value] || {});
+      fillSelect(document.getElementById('sel-variabel'), variabelKeys, false);
+      renderTimeline();
+      setStatus('');
+      loadPlot();
+    }
+
+    async function loadPlot() {
+      const kategori = document.getElementById('sel-kategori').value;
+      const variabel = document.getElementById('sel-variabel').value;
+      const skenario = activeSkenario();
+      const periode = getActivePeriode();
+      const jenis = document.getElementById('sel-jenis').value;
+      const dataset = document.getElementById('sel-dataset').value;
+      const model = document.getElementById('sel-model').value;
+
+      if (!kategori || !variabel || !skenario || !periode || !jenis || !model) return;
+
+      setStatus('Memuat data...');
+      const params = new URLSearchParams({ kategori, variabel, skenario, periode, jenis, model });
+      const res = await fetch('/api/data?' + params.toString());
+      const payload = await res.json();
+
+      if (!res.ok) {
+        setStatus(payload.error || 'Gagal memuat data.', true);
+        return;
+      }
+      setStatus('');
+
+      document.getElementById('topbar-title').textContent = payload.var_label || variabel;
+      
+      const skenarioLabel = getLabel('scenario', skenario);
+      const varName = payload.var_label || variabel;
+      
+      const titleJenis = jenis.charAt(0).toUpperCase() + jenis.slice(1).toLowerCase();
+      
+      let titleStr = '';
+      if (document.getElementById('scenario-wrap').dataset.active === 'historical') {
+         titleStr = `${titleJenis} of ${varName} - Historical (${activeHist.replace('_', '-')})`;
+      } else {
+         if (periode === getCombinedPeriode()) {
+            titleStr = `${titleJenis} of ${varName} - ${skenarioLabel} (${activeProj.replace('_', '-')}) relative to ${activeRef.replace('_', '-')}`;
+         } else {
+            titleStr = `${titleJenis} of ${varName} - ${skenarioLabel} (${activeProj.replace('_', '-')})`;
+         }
+      }
+      document.getElementById('timeline-title').textContent = titleStr;
+
+      let displayPeriode = (document.getElementById('scenario-wrap').dataset.active === 'historical') ? activeHist : activeProj;
+      if (document.getElementById('scenario-wrap').dataset.active === 'future' && periode === getCombinedPeriode()) {
+         displayPeriode = `${activeProj.replace('_','-')} (Ref: ${activeRef.replace('_','-')})`;
+      } else {
+         displayPeriode = displayPeriode.replace('_', '-');
+      }
+
+      document.getElementById('topbar-meta').innerHTML =
+        `<span>Dataset: <b>${dataset} (${model})</b></span>` +
+        `<span>Period: <b>${displayPeriode}</b></span>` +
+        `<span>Quantity: <b>${titleJenis}</b></span>` +
+        `<span>Scenario: <b>${skenarioLabel}</b></span>`;
+
+      drawOverlay(payload);
+    }
+
+    function currentZRange() {
+      const zmin = document.getElementById('in-min').value;
+      const zmax = document.getElementById('in-max').value;
+      if (zmin === '' || zmax === '' || autoRange) return null;
+      return [parseFloat(zmin), parseFloat(zmax)];
+    }
+
+    function drawOverlay(payload) {
+      lastPayload = payload;
+
+      const lat = payload.lat, lon = payload.lon, z = payload.z;
+      const cfgScale = payload.color_scale || null;
+
+      // Kalau ada konfigurasi untuk variabel+jenis ini dan user belum override manual,
+      // pakai palet dari config juga (biar konsisten dengan min/max-nya).
+      if (cfgScale && autoRange && cfgScale.palette && !manualPalette) {
+        currentPalette = cfgScale.palette;
+      }
+
+      // Selalu update UI popup agar sinkron dengan currentPalette
+      document.querySelectorAll('.palette-option').forEach(el => {
+         el.style.border = (el.dataset.cs === currentPalette) ? '1px solid var(--accent)' : '1px solid transparent';
+      });
+
+      let zmin, zmax;
+      const manualRange = currentZRange();
+      if (manualRange) {
+        [zmin, zmax] = manualRange;
+      } else if (cfgScale && cfgScale.min !== null && cfgScale.min !== undefined
+        && cfgScale.max !== null && cfgScale.max !== undefined) {
+        // Skala dari file konfigurasi color_scales.json
+        zmin = cfgScale.min;
+        zmax = cfgScale.max;
+        document.getElementById('in-min').value = zmin;
+        document.getElementById('in-max').value = zmax;
+      } else {
+        // Fallback: auto-range simetris dari data
+        const flat = z.flat().filter(v => v !== null && v !== undefined);
+        let mn = Math.min(...flat);
+        let mx = Math.max(...flat);
+        const bound = Math.max(Math.abs(mn), Math.abs(mx));
+        zmin = -bound; zmax = bound;
+        document.getElementById('in-min').value = zmin.toFixed(2);
+        document.getElementById('in-max').value = zmax.toFixed(2);
+      }
+      
+      if (autoRange) {
+        sliderTrackMin = zmin;
+        sliderTrackMax = zmax;
+      }
+      updateKnobs();
+      // Update dynamic ticks
+      const ticksDiv = document.getElementById('colorbar-ticks');
+      if (ticksDiv) {
+         ticksDiv.innerHTML = '';
+         const diff = Math.abs(zmax - zmin);
+         const count = diff > 0 ? Math.min(10, Math.ceil(diff)) : 10;
+         const step = (zmax - zmin) / count;
+         ticksDiv.innerHTML += `<span>< ${Math.floor(zmin)}</span>`;
+         for (let i = 1; i < count; i++) {
+            ticksDiv.innerHTML += `<span>${Math.round(zmin + i * step)}</span>`;
+         }
+         ticksDiv.innerHTML += `<span>> ${Math.ceil(zmax)}</span>`;
+      }
+
+      const nLat = lat.length, nLon = lon.length;
+      const canvas = document.createElement('canvas');
+      canvas.width = nLon;
+      canvas.height = nLat;
+      const ctx = canvas.getContext('2d');
+      const imgData = ctx.createImageData(nLon, nLat);
+
+      const isDiscrete = document.getElementById('chk-discrete') && document.getElementById('chk-discrete').checked;
+      
+      // Update colorbar strip based on discrete mode
+      document.getElementById('colorbar-strip').style.background = paletteGradientCss(currentPalette, isDiscrete);
+
+      // lat[] diasumsikan menaik (selatan -> utara). Baris kanvas paling atas = lintang tertinggi (utara).
+      for (let row = 0; row < nLat; row++) {
+        const latIdx = nLat - 1 - row; // flip supaya utara di atas
+        for (let col = 0; col < nLon; col++) {
+          const val = z[latIdx][col];
+          const idx = (row * nLon + col) * 4;
+
+          if (val === null || val === undefined) {
+            imgData.data[idx] = 0;
+            imgData.data[idx + 1] = 0;
+            imgData.data[idx + 2] = 0;
+            imgData.data[idx + 3] = 0; // transparent
+          } else {
+            const t = (val - zmin) / (zmax - zmin);
+            const c = colormap(currentPalette, t, isDiscrete);
+            imgData.data[idx] = c[0];
+            imgData.data[idx + 1] = c[1];
+            imgData.data[idx + 2] = c[2];
+            imgData.data[idx + 3] = 255;
+          }
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+
+      const imageUrl = canvas.toDataURL('image/png');
+      const bounds = [[lat[0], lon[0]], [lat[nLat - 1], lon[nLon - 1]]];
+
+      if (currentOverlay) {
+        map.removeLayer(currentOverlay);
+      }
+      const opacity = parseFloat(document.getElementById('in-opacity').value) || 0.8;
+      currentOverlay = L.imageOverlay(imageUrl, bounds, { opacity: opacity }).addTo(map);
+      map.fitBounds(bounds);
+    }
+
+    document.getElementById('sel-kategori').addEventListener('change', () => {
+      const kategori = document.getElementById('sel-kategori').value;
+      const variabelKeys = Object.keys(OPTIONS[kategori] || {});
+      fillSelect(document.getElementById('sel-variabel'), variabelKeys, false);
+      renderTimeline();
+      loadPlot();
+    });
+
+    document.getElementById('sel-variabel').addEventListener('change', () => {
+      renderTimeline();
+      loadPlot();
+    });
+
+    document.getElementById('sel-skenario').addEventListener('change', () => {
+      const selSk = document.getElementById('sel-skenario');
+      const { historicalKeys } = currentSkenarioGroup();
+      document.getElementById('scenario-wrap').dataset.active = historicalKeys.includes(selSk.value) ? 'historical' : 'future';
+      renderTimeline();
+      loadPlot();
+    });
+
+    document.getElementById('sel-jenis').addEventListener('change', () => {
+      updateDatasetModel();
+      loadPlot();
+    });
+
+    document.getElementById('sel-dataset').addEventListener('change', () => {
+      updateModelDropdown();
+      loadPlot();
+    });
+
+    document.getElementById('sel-model').addEventListener('change', () => {
+      loadPlot();
+    });
+
+    // Initialize Palette Popup
+    const plist = document.getElementById('palette-list');
+    Object.keys(PALETTES).forEach(pname => {
+       const div = document.createElement('div');
+       div.className = 'palette-option' + (pname === currentPalette ? ' active' : '');
+       div.dataset.cs = pname;
+       div.style.cursor = 'pointer';
+       div.style.padding = '2px';
+       div.style.borderRadius = '8px';
+       div.style.border = (pname === currentPalette) ? '1px solid var(--accent)' : '1px solid transparent';
+       
+       const grad = document.createElement('div');
+       grad.style.height = '16px';
+       grad.style.borderRadius = '8px';
+       grad.style.background = paletteGradientCss(pname);
+       div.appendChild(grad);
+       
+       div.onclick = (e) => {
+          manualPalette = true;
+          currentPalette = pname;
+          document.querySelectorAll('.palette-option').forEach(el => el.style.border = '1px solid transparent');
+          div.style.border = '1px solid var(--accent)';
+          document.getElementById('palette-popup').style.display = 'none';
+          if (lastPayload) drawOverlay(lastPayload);
+          e.stopPropagation();
+       };
+       plist.appendChild(div);
+    });
+
+    document.addEventListener('click', () => {
+       document.getElementById('palette-popup').style.display = 'none';
+    });
+
+    document.getElementById('in-opacity').addEventListener('input', (e) => {
+      if (currentOverlay) currentOverlay.setOpacity(parseFloat(e.target.value));
+    });
+
+    document.getElementById('in-min').addEventListener('change', () => { autoRange = false; if (lastPayload) drawOverlay(lastPayload); });
+    document.getElementById('in-max').addEventListener('change', () => { autoRange = false; if (lastPayload) drawOverlay(lastPayload); });
+
+    // Slider UI Logic
+    function updateKnobs() {
+       const zmin = parseFloat(document.getElementById('in-min').value) || sliderTrackMin;
+       const zmax = parseFloat(document.getElementById('in-max').value) || sliderTrackMax;
+       const p1 = Math.max(0, Math.min(100, (zmin - sliderTrackMin) / (sliderTrackMax - sliderTrackMin) * 100));
+       const p2 = Math.max(0, Math.min(100, (zmax - sliderTrackMin) / (sliderTrackMax - sliderTrackMin) * 100));
+       document.getElementById('cb-knob-left').style.left = p1 + '%';
+       document.getElementById('cb-knob-right').style.left = p2 + '%';
+       document.querySelector('.colorbar-bridge').style.clipPath = `polygon(${p1}% 0%, ${p2}% 0%, 100% 100%, 0% 100%)`;
+    }
+
+    let activeKnob = null;
+    function onSliderMove(e) {
+       if (!activeKnob) return;
+       const trackArea = document.getElementById('cb-knobs').getBoundingClientRect();
+       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+       const dx = clientX - trackArea.left;
+       let p = Math.max(0, Math.min(1, dx / trackArea.width));
+       let val = sliderTrackMin + p * (sliderTrackMax - sliderTrackMin);
+       
+       if (activeKnob.id === 'cb-knob-left') {
+           const v2 = parseFloat(document.getElementById('in-max').value) || sliderTrackMax;
+           if (val > v2) val = v2;
+           document.getElementById('in-min').value = val.toFixed(2);
+       } else {
+           const v1 = parseFloat(document.getElementById('in-min').value) || sliderTrackMin;
+           if (val < v1) val = v1;
+           document.getElementById('in-max').value = val.toFixed(2);
+       }
+       updateKnobs();
+    }
+    function onSliderUp(e) {
+       if (activeKnob) {
+          activeKnob = null;
+          autoRange = false;
+          if (lastPayload) drawOverlay(lastPayload);
+       }
+    }
+    
+    document.getElementById('cb-knob-left').onmousedown = (e) => { activeKnob = e.target; };
+    document.getElementById('cb-knob-right').onmousedown = (e) => { activeKnob = e.target; };
+    document.addEventListener('mousemove', onSliderMove);
+    document.addEventListener('mouseup', onSliderUp);
+    
+    document.getElementById('cb-knob-left').ontouchstart = (e) => { activeKnob = e.target; };
+    document.getElementById('cb-knob-right').ontouchstart = (e) => { activeKnob = e.target; };
+    document.addEventListener('touchmove', onSliderMove);
+    document.addEventListener('touchend', onSliderUp);
+
+    document.querySelector('.collapse-btn').addEventListener('click', (e) => {
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar.style.width === '0px' || sidebar.style.display === 'none') {
+        sidebar.style.width = '320px';
+        sidebar.style.display = 'block';
+        sidebar.style.padding = '20px 24px';
+        e.target.innerHTML = '&laquo;';
+      } else {
+        sidebar.style.width = '0px';
+        sidebar.style.display = 'none';
+        sidebar.style.padding = '0';
+        e.target.innerHTML = '&raquo;';
+      }
+      setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      loadOptions();
+    });
+  </script>
+</body>
+</html>

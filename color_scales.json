@@ -1,0 +1,761 @@
+{
+  "_readme": "Konfigurasi skala warna peta dan nama lengkap variabel. KLIMATOLOGI = nilai klimatologi, TREND = kecenderungan (per dekade), CHANGE = perubahan relatif (%), VALUE = delta perubahan (satuan variabel). Tambahkan 'name' untuk mengubah judul variabel di atas peta.",
+  "default": {
+    "KLIMATOLOGI": {
+      "min": null,
+      "max": null,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": null,
+      "max": null,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": null,
+      "max": null,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": null,
+      "max": null,
+      "palette": "rdbu"
+    }
+  },
+  "CDD": {
+    "name": "Consecutive Dry Days (Days)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 60,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -5,
+      "max": 5,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    }
+  },
+  "CWD": {
+    "name": "Consecutive Wet Days (Days)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 30,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -5,
+      "max": 5,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -5,
+      "max": 5,
+      "palette": "rdbu"
+    }
+  },
+  "FH20MM": {
+    "name": "Frequency of Rainfall ≥ 20 mm (Events)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 60,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -3,
+      "max": 3,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    }
+  },
+  "FH50MM": {
+    "name": "Frequency of Rainfall ≥ 50 mm (Events)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 15,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -50,
+      "max": 50,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -3,
+      "max": 3,
+      "palette": "rdbu"
+    }
+  },
+  "FH100MM": {
+    "name": "Frequency of Rainfall ≥ 100 mm (Events)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 3,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -0.3,
+      "max": 0.3,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -100,
+      "max": 100,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    }
+  },
+  "FH150MM": {
+    "name": "Frequency of Rainfall ≥ 150 mm (Events)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 1,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -0.1,
+      "max": 0.1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -100,
+      "max": 100,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -0.3,
+      "max": 0.3,
+      "palette": "rdbu"
+    }
+  },
+  "HH": {
+    "name": "Number of Rainy Days (Days)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 300,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -20,
+      "max": 20,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    }
+  },
+  "HH20MM": {
+    "name": "Number of Days with Rainfall ≥ 20 mm (Days)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 60,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -3,
+      "max": 3,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    }
+  },
+  "HH50MM": {
+    "name": "Number of Days with Rainfall ≥ 50 mm (Days)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 15,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -50,
+      "max": 50,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -3,
+      "max": 3,
+      "palette": "rdbu"
+    }
+  },
+  "HH100MM": {
+    "name": "Number of Days with Rainfall ≥ 100 mm (Days)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 3,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -0.3,
+      "max": 0.3,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -100,
+      "max": 100,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    }
+  },
+  "HH150MM": {
+    "name": "Number of Days with Rainfall ≥ 150 mm (Days)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 1,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -0.1,
+      "max": 0.1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -100,
+      "max": 100,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -0.3,
+      "max": 0.3,
+      "palette": "rdbu"
+    }
+  },
+  "PRCPTOT": {
+    "name": "Annual Total Wet-Day Precipitation (mm)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 4000,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -50,
+      "max": 50,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -500,
+      "max": 500,
+      "palette": "rdbu"
+    }
+  },
+  "R95P": {
+    "name": "Annual Total Precipitation from Very Wet Days > 95th Percentile (mm)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 1500,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -50,
+      "max": 50,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -300,
+      "max": 300,
+      "palette": "rdbu"
+    }
+  },
+  "R95PTOT": {
+    "name": "Contribution of Very Wet Days > 95th Percentile to Total Precipitation (%)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 60,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -2,
+      "max": 2,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    }
+  },
+  "R99P": {
+    "name": "Annual Total Precipitation from Extremely Wet Days > 99th Percentile (mm)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 600,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -20,
+      "max": 20,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -100,
+      "max": 100,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -150,
+      "max": 150,
+      "palette": "rdbu"
+    }
+  },
+  "R99PTOT": {
+    "name": "Contribution of Extremely Wet Days > 99th Percentile to Total Precipitation (%)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 30,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -2,
+      "max": 2,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -50,
+      "max": 50,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -5,
+      "max": 5,
+      "palette": "rdbu"
+    }
+  },
+  "RX1DAY": {
+    "name": "Max 1-Day Precipitation Amount (mm)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 150,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    }
+  },
+  "RX5DAY": {
+    "name": "Max 5-Day Precipitation Amount (mm)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 250,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -50,
+      "max": 50,
+      "palette": "rdbu"
+    }
+  },
+  "RX7DAY": {
+    "name": "Max 7-Day Precipitation Amount (mm)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 300,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -60,
+      "max": 60,
+      "palette": "rdbu"
+    }
+  },
+  "RX10DAY": {
+    "name": "Max 10-Day Precipitation Amount (mm)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 350,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -15,
+      "max": 15,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -70,
+      "max": 70,
+      "palette": "rdbu"
+    }
+  },
+  "SDII": {
+    "name": "Simple Precipitation Intensity Index (mm/day)",
+    "KLIMATOLOGI": {
+      "min": 0,
+      "max": 20,
+      "palette": "viridis"
+    },
+    "TREND": {
+      "min": -2,
+      "max": 2,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -30,
+      "max": 30,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -5,
+      "max": 5,
+      "palette": "rdbu"
+    }
+  },
+  "DTR": {
+    "name": "Diurnal Temperature Range (°C)",
+    "KLIMATOLOGI": {
+      "min": 4,
+      "max": 14,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -20,
+      "max": 20,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -2,
+      "max": 2,
+      "palette": "rdbu"
+    }
+  },
+  "ETR": {
+    "name": "Extreme Temperature Range (°C)",
+    "KLIMATOLOGI": {
+      "min": 8,
+      "max": 25,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -20,
+      "max": 20,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": -3,
+      "max": 3,
+      "palette": "rdbu"
+    }
+  },
+  "TMM": {
+    "name": "Mean of Daily Mean Temperature (°C)",
+    "KLIMATOLOGI": {
+      "min": 20,
+      "max": 34,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": 0,
+      "max": 4,
+      "palette": "jet"
+    }
+  },
+  "TMN": {
+    "name": "Min of Daily Mean Temperature (°C)",
+    "KLIMATOLOGI": {
+      "min": 15,
+      "max": 30,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": 0,
+      "max": 4,
+      "palette": "jet"
+    }
+  },
+  "TMX": {
+    "name": "Max of Daily Mean Temperature (°C)",
+    "KLIMATOLOGI": {
+      "min": 22,
+      "max": 36,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": 0,
+      "max": 4,
+      "palette": "jet"
+    }
+  },
+  "TNM": {
+    "name": "Mean of Daily Minimum Temperature (°C)",
+    "KLIMATOLOGI": {
+      "min": 15,
+      "max": 28,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": 0,
+      "max": 4,
+      "palette": "jet"
+    }
+  },
+  "TNN": {
+    "name": "Min of Daily Minimum Temperature (°C)",
+    "KLIMATOLOGI": {
+      "min": 10,
+      "max": 28,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": 0,
+      "max": 4,
+      "palette": "jet"
+    }
+  },
+  "TNX": {
+    "name": "Max of Daily Minimum Temperature (°C)",
+    "KLIMATOLOGI": {
+      "min": 18,
+      "max": 32,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": 0,
+      "max": 4,
+      "palette": "jet"
+    }
+  },
+  "TXM": {
+    "name": "Mean of Daily Maximum Temperature (°C)",
+    "KLIMATOLOGI": {
+      "min": 25,
+      "max": 38,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": 0,
+      "max": 4,
+      "palette": "jet"
+    }
+  },
+  "TXN": {
+    "name": "Min of Daily Maximum Temperature (°C)",
+    "KLIMATOLOGI": {
+      "min": 18,
+      "max": 34,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": 0,
+      "max": 4,
+      "palette": "jet"
+    }
+  },
+  "TXX": {
+    "name": "Max of Daily Maximum Temperature (°C)",
+    "KLIMATOLOGI": {
+      "min": 25,
+      "max": 40,
+      "palette": "jet"
+    },
+    "TREND": {
+      "min": -1,
+      "max": 1,
+      "palette": "rdbu"
+    },
+    "CHANGE": {
+      "min": -10,
+      "max": 10,
+      "palette": "rdbu"
+    },
+    "VALUE": {
+      "min": 0,
+      "max": 4,
+      "palette": "jet"
+    }
+  }
+}

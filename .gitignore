@@ -1,0 +1,96 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# ---------- Virtual environments ----------
+venv/
+.venv/
+env/
+ENV/
+
+# ---------- Flask ----------
+instance/
+.webassets-cache
+flask_session/
+*.sqlite
+*.sqlite3
+*.db
+
+# ---------- Environment & secrets ----------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+config.local.py
+
+# ---------- Testing & coverage ----------
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ---------- Jupyter ----------
+.ipynb_checkpoints/
+
+# ---------- Logs & temp ----------
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+
+# ---------- Data iklim (file besar, jangan di-commit) ----------
+*.nc
+*.nc4
+*.grib
+*.grib2
+*.grb
+*.tif
+*.tiff
+*.hdf
+*.h5
+*.zarr/
+data/
+datasets/
+# Jika ingin tetap menyimpan sampel kecil, hapus baris "data/" di atas
+# lalu gunakan: !data/sample/
+
+# ---------- Cache & output hasil olahan ----------
+cache/
+output/
+outputs/
+tiles/
+*.npy
+*.npz
+*.pkl
+
+# ---------- Node (jika memakai npm untuk tooling) ----------
+node_modules/
+
+# ---------- IDE / Editor ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+/proyeksi_curah_hujan
+/proyeksi_suhu
