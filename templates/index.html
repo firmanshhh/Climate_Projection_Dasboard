@@ -19,6 +19,44 @@
       --accent-light: #fdf2f2;
     }
 
+    .pixelated-layer {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    .custom-leaflet-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      background: #fff;
+      border: 1px solid var(--accent);
+      cursor: pointer;
+      color: var(--accent);
+    }
+    .custom-leaflet-btn:hover {
+      background: #f0f4f8;
+    }
+    .custom-leaflet-group {
+      box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+      margin-top: 10px;
+    }
+    .custom-leaflet-group .custom-leaflet-btn {
+      border-bottom: none;
+    }
+    .custom-leaflet-group .custom-leaflet-btn:last-child {
+      border-bottom: 1px solid var(--accent);
+    }
+    .custom-leaflet-single {
+      box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+      margin-top: 10px;
+    }
+    .custom-leaflet-single .custom-leaflet-btn {
+      border-bottom: 1px solid var(--accent);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -214,6 +252,7 @@
       cursor: pointer;
     }
     #colorbar-strip {
+      position: relative;
       height: 24px;
       border-radius: 0 0 6px 6px;
       background: linear-gradient(to right, #053061, #2166ac, #4393c3, #92c5de, #d1e5f0, #f7f7f7, #fddbc7, #f4a582, #d6604d, #b2182b, #67001f);
@@ -437,7 +476,7 @@
       width: auto;
       min-width: 200px;
       padding: 8px 16px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--accent);
       border-radius: 6px;
       font-size: 0.95rem;
       background: #fff;
@@ -454,8 +493,8 @@
         <div class="collapse-btn">&laquo;</div>
       </div>
 
-      <div class="field" style="display:none;">
-        <label>Kategori (Internal)</label>
+      <div class="field">
+        <label>Kategori</label>
         <select id="sel-kategori"></select>
       </div>
 
@@ -493,7 +532,9 @@
               <div class="colorbar-knob" id="cb-knob-right" style="position:absolute; top:0; left:100%; transform:translateX(-50%);"></div>
             </div>
             <div class="colorbar-bridge" style="clip-path:polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);"></div>
-            <div id="colorbar-strip"></div>
+            <div id="colorbar-strip">
+              <div id="colorbar-cursor-line" style="display:none; position:absolute; top:0; bottom:0; width:2px; background:#000; z-index:999; pointer-events:none; transition: left 0.05s linear; margin-left:-1px;"></div>
+            </div>
           </div>
         </div>
         <div id="colorbar-ticks" class="colorbar-ticks"></div>
@@ -515,8 +556,12 @@
               <div class="palette-list" id="palette-list" style="display:flex; flex-direction:column; gap:6px;"></div>
               <hr style="border:none; border-top:1px solid #e5e7eb; margin:10px 0;">
               <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; color:#374151; cursor:pointer;">
-                 <input type="checkbox" id="chk-discrete" onchange="if(lastPayload) drawOverlay(lastPayload);"> Discrete
+                 <input type="checkbox" id="chk-discrete" onchange="document.getElementById('bins-wrapper').style.display = this.checked ? 'flex' : 'none'; if(lastPayload) drawOverlay(lastPayload);"> Discrete
               </label>
+              <div id="bins-wrapper" style="display:none; align-items:center; justify-content:space-between; margin-top:8px; font-size:0.85rem; color:#374151;">
+                 <span>Jumlah Kelas:</span>
+                 <input type="number" id="in-bins" value="8" min="2" max="20" style="width:50px; padding:2px 4px; border:1px solid #d1d5db; border-radius:4px;" onchange="if(lastPayload) drawOverlay(lastPayload);">
+              </div>
            </div>
         </div>
         <div id="opacity-row" style="margin-top:16px;">
@@ -559,14 +604,162 @@
     let lastPayload = null;
     let map = null;
     let currentOverlay = null;
+    window.isPixelated = true;
 
     /* ---------- Peta dasar (Leaflet) ---------- */
     function initMap() {
-      map = L.map('map', { zoomControl: true, worldCopyJump: true }).setView([0, 115], 5);
+      map = L.map('map', { zoomControl: false, worldCopyJump: true }).setView([0, 115], 5);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
       }).addTo(map);
+
+      // Custom Controls: FullScreen, Zoom In, Mode, Zoom Out
+      // Custom Controls: FullScreen, Mode, Zoom Group
+      const CustomControls = L.Control.extend({
+        options: { position: 'topright' },
+        onAdd: function (map) {
+             const wrap = L.DomUtil.create('div');
+             wrap.style.marginTop = '110px'; // Push down further to avoid topbar
+
+             // Fullscreen
+             const fsGroup = L.DomUtil.create('div', 'custom-leaflet-single leaflet-control', wrap);
+             const btnFs = L.DomUtil.create('div', 'custom-leaflet-btn', fsGroup);
+             btnFs.title = "Enter Full Screen";
+             btnFs.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
+
+             L.DomEvent.on(btnFs, 'click', function (e) {
+                 L.DomEvent.preventDefault(e);
+                 const mapContainer = document.getElementById('map');
+                 if (!document.fullscreenElement) {
+                     if (mapContainer.requestFullscreen) mapContainer.requestFullscreen();
+                     else if (mapContainer.webkitRequestFullscreen) mapContainer.webkitRequestFullscreen();
+                     else if (mapContainer.msRequestFullscreen) mapContainer.msRequestFullscreen();
+                 } else {
+                     if (document.exitFullscreen) document.exitFullscreen();
+                     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                     else if (document.msExitFullscreen) document.msExitFullscreen();
+                 }
+             });
+
+             document.addEventListener('fullscreenchange', function() {
+                  if (document.fullscreenElement) {
+                      btnFs.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3h3M21 8h-3V5M3 16h3v3M16 21v-3h3"></path></svg>`;
+                      btnFs.title = "Exit Full Screen";
+                  } else {
+                      btnFs.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
+                      btnFs.title = "Enter Full Screen";
+                  }
+             });
+
+             // Mode Toggle (Standalone)
+             const modeGroup = L.DomUtil.create('div', 'custom-leaflet-single leaflet-control', wrap);
+             const btnMode = L.DomUtil.create('div', 'custom-leaflet-btn', modeGroup);
+             btnMode.title = window.isPixelated ? "Mode: Sharp (Pixelated)" : "Mode: Smooth (Interpolated)";
+             const iconSharp = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8"></rect><rect x="13" y="3" width="8" height="8"></rect><rect x="3" y="13" width="8" height="8"></rect><rect x="13" y="13" width="8" height="8"></rect></svg>`;
+             const iconSmooth = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>`;
+             
+             btnMode.innerHTML = window.isPixelated ? iconSharp : iconSmooth;
+             L.DomEvent.on(btnMode, 'click', function(e) {
+                 L.DomEvent.preventDefault(e);
+                 window.isPixelated = !window.isPixelated;
+                 if (window.isPixelated) {
+                     btnMode.innerHTML = iconSharp;
+                     btnMode.title = "Mode: Sharp (Pixelated)";
+                 } else {
+                     btnMode.innerHTML = iconSmooth;
+                     btnMode.title = "Mode: Smooth (Interpolated)";
+                 }
+                 if (currentOverlay && currentOverlay.getElement()) {
+                    if (window.isPixelated) L.DomUtil.addClass(currentOverlay.getElement(), 'pixelated-layer');
+                    else L.DomUtil.removeClass(currentOverlay.getElement(), 'pixelated-layer');
+                 }
+             });
+
+             // Stack Group (Zoom In, Reset View, Zoom Out)
+             const stack = L.DomUtil.create('div', 'custom-leaflet-group leaflet-control', wrap);
+             
+             // Zoom In
+             const btnZoomIn = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
+             btnZoomIn.title = "Zoom In";
+             btnZoomIn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`;
+             L.DomEvent.on(btnZoomIn, 'click', function(e) {
+                 L.DomEvent.preventDefault(e);
+                 map.zoomIn();
+             });
+
+             // Reset Map View
+             const btnReset = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
+             btnReset.title = "Reset View";
+             btnReset.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-dasharray="4 4"></rect><rect x="8" y="8" width="8" height="8" rx="1" ry="1" fill="none"></rect></svg>`;
+             L.DomEvent.on(btnReset, 'click', function(e) {
+                 L.DomEvent.preventDefault(e);
+                 map.setView([0, 115], 5);
+             });
+
+             // Zoom Out
+             const btnZoomOut = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
+             btnZoomOut.title = "Zoom Out";
+             btnZoomOut.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`;
+             L.DomEvent.on(btnZoomOut, 'click', function(e) {
+                 L.DomEvent.preventDefault(e);
+                 map.zoomOut();
+             });
+
+             return wrap;
+        }
+      });
+      map.addControl(new CustomControls());
+
+      // Track cursor over map to show value on colorbar
+      map.on('mousemove', function(e) {
+        if (!lastPayload) return;
+        const lat = lastPayload.lat;
+        const lon = lastPayload.lon;
+        const z = lastPayload.z;
+        const ptLat = e.latlng.lat;
+        const ptLon = e.latlng.lng;
+
+        if (ptLat < lat[0] || ptLat > lat[lat.length-1] || ptLon < lon[0] || ptLon > lon[lon.length-1]) {
+           document.getElementById('colorbar-cursor-line').style.display = 'none';
+           return;
+        }
+
+        let latIdx = 0;
+        let minLatDiff = Infinity;
+        for (let i = 0; i < lat.length; i++) {
+           const diff = Math.abs(lat[i] - ptLat);
+           if (diff < minLatDiff) { minLatDiff = diff; latIdx = i; }
+        }
+        
+        let lonIdx = 0;
+        let minLonDiff = Infinity;
+        for (let i = 0; i < lon.length; i++) {
+           const diff = Math.abs(lon[i] - ptLon);
+           if (diff < minLonDiff) { minLonDiff = diff; lonIdx = i; }
+        }
+
+        const val = (z[latIdx] && z[latIdx][lonIdx] !== undefined) ? z[latIdx][lonIdx] : null;
+
+        if (val === null || val === undefined) {
+           document.getElementById('colorbar-cursor-line').style.display = 'none';
+        } else {
+           const line = document.getElementById('colorbar-cursor-line');
+           line.style.display = 'block';
+           
+           const zmin = parseFloat(document.getElementById('in-min').value);
+           const zmax = parseFloat(document.getElementById('in-max').value);
+           
+           let t = (val - zmin) / (zmax - zmin);
+           t = Math.max(0, Math.min(1, t)); 
+           line.style.left = (t * 100) + '%';
+        }
+      });
+      
+      map.on('mouseout', function() {
+         const line = document.getElementById('colorbar-cursor-line');
+         if(line) line.style.display = 'none';
+      });
     }
 
     /* ---------- Colormap ---------- */
@@ -586,12 +779,12 @@
       return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
     }
 
-    function colormap(paletteName, t, isDiscrete) {
+    function colormap(paletteName, t, isDiscrete, numBins=8) {
       const stops = PALETTES[paletteName] || PALETTES.rdbu;
       t = Math.max(0, Math.min(1, t));
       if (isDiscrete) {
-         const idx = Math.min(stops.length - 1, Math.floor(t * stops.length));
-         return hexToRgb(stops[idx]);
+         const binIdx = Math.min(numBins - 1, Math.floor(t * numBins));
+         t = binIdx / Math.max(1, numBins - 1);
       }
       const n = stops.length - 1;
       const pos = t * n;
@@ -606,15 +799,23 @@
       ];
     }
 
-    function paletteGradientCss(paletteName, isDiscrete) {
+    function paletteGradientCss(paletteName, isDiscrete, numBins=8) {
       const stops = PALETTES[paletteName] || PALETTES.rdbu;
       if (!isDiscrete) return `linear-gradient(to right, ${stops.join(',')})`;
       let css = 'linear-gradient(to right, ';
-      const step = 100 / stops.length;
-      stops.forEach((c, i) => {
-         css += `${c} ${i*step}%, ${c} ${(i+1)*step}%`;
-         if (i < stops.length - 1) css += ', ';
-      });
+      const step = 100 / numBins;
+      for (let i = 0; i < numBins; i++) {
+         const t = i / Math.max(1, numBins - 1);
+         const n = stops.length - 1;
+         const pos = t * n;
+         const idx = Math.min(n - 1, Math.floor(pos));
+         const frac = pos - idx;
+         const c0 = hexToRgb(stops[idx]);
+         const c1 = hexToRgb(stops[idx + 1]);
+         const rgb = `rgb(${Math.round(c0[0] + (c1[0] - c0[0]) * frac)},${Math.round(c0[1] + (c1[1] - c0[1]) * frac)},${Math.round(c0[2] + (c1[2] - c0[2]) * frac)})`;
+         css += `${rgb} ${i*step}%, ${rgb} ${(i+1)*step}%`;
+         if (i < numBins - 1) css += ', ';
+      }
       css += ')';
       return css;
     }
@@ -707,9 +908,13 @@
       const anyFutureSkenario = futureKeys[0];
       const futurePeriodeKeys = Object.keys((((OPTIONS[kategori] || {})[variabel]) || {})[anyFutureSkenario] || {});
 
+      const jenis = document.getElementById('sel-jenis').value;
+      const isFuture = scenarioWrap.dataset.active === 'future';
+
       // 1. Historical references
       ['1981_2010', '1991_2020'].forEach(p => {
         if (histPeriods.includes(p)) {
+          if (isFuture && (jenis === 'KLIMATOLOGI' || jenis === 'TREND')) return;
           pointsData.push({ type: 'hist', id: p, label: p.replace('_', '-'), position: 'top' });
         }
       });
@@ -768,6 +973,12 @@
               loadPlot();
             }
           } else if (pd.type === 'future') {
+            if (scenarioWrap.dataset.active === 'historical') {
+              const { futureKeys } = currentSkenarioGroup();
+              const selSk = document.getElementById('sel-skenario');
+              const defaultSsp = futureKeys.includes('ssp245') ? 'ssp245' : futureKeys[0];
+              if (defaultSsp) selSk.value = defaultSsp;
+            }
             scenarioWrap.dataset.active = 'future';
             activeProj = pd.id;
             renderTimeline();
@@ -1022,6 +1233,11 @@
         currentPalette = cfgScale.palette;
       }
 
+      if (cfgScale && cfgScale.unit) {
+        const lbl = document.getElementById('lbl-unit');
+        if (lbl) lbl.textContent = cfgScale.unit;
+      }
+
       // Selalu update UI popup agar sinkron dengan currentPalette
       document.querySelectorAll('.palette-option').forEach(el => {
          el.style.border = (el.dataset.cs === currentPalette) ? '1px solid var(--accent)' : '1px solid transparent';
@@ -1076,9 +1292,10 @@
       const imgData = ctx.createImageData(nLon, nLat);
 
       const isDiscrete = document.getElementById('chk-discrete') && document.getElementById('chk-discrete').checked;
+      const numBins = document.getElementById('in-bins') ? parseInt(document.getElementById('in-bins').value) || 8 : 8;
       
       // Update colorbar strip based on discrete mode
-      document.getElementById('colorbar-strip').style.background = paletteGradientCss(currentPalette, isDiscrete);
+      document.getElementById('colorbar-strip').style.background = paletteGradientCss(currentPalette, isDiscrete, numBins);
 
       // lat[] diasumsikan menaik (selatan -> utara). Baris kanvas paling atas = lintang tertinggi (utara).
       for (let row = 0; row < nLat; row++) {
@@ -1094,7 +1311,7 @@
             imgData.data[idx + 3] = 0; // transparent
           } else {
             const t = (val - zmin) / (zmax - zmin);
-            const c = colormap(currentPalette, t, isDiscrete);
+            const c = colormap(currentPalette, t, isDiscrete, numBins);
             imgData.data[idx] = c[0];
             imgData.data[idx + 1] = c[1];
             imgData.data[idx + 2] = c[2];
@@ -1111,7 +1328,7 @@
         map.removeLayer(currentOverlay);
       }
       const opacity = parseFloat(document.getElementById('in-opacity').value) || 0.8;
-      currentOverlay = L.imageOverlay(imageUrl, bounds, { opacity: opacity }).addTo(map);
+      currentOverlay = L.imageOverlay(imageUrl, bounds, { opacity: opacity, className: window.isPixelated ? 'pixelated-layer' : '' }).addTo(map);
       map.fitBounds(bounds);
     }
 
@@ -1137,6 +1354,7 @@
     });
 
     document.getElementById('sel-jenis').addEventListener('change', () => {
+      renderTimeline();
       updateDatasetModel();
       loadPlot();
     });

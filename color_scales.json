@@ -4,22 +4,26 @@
     "KLIMATOLOGI": {
       "min": null,
       "max": null,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": ""
     },
     "TREND": {
       "min": null,
       "max": null,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "per decade"
     },
     "CHANGE": {
       "min": null,
       "max": null,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": null,
       "max": null,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": ""
     }
   },
   "CDD": {
@@ -27,22 +31,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 60,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Days"
     },
     "TREND": {
       "min": -5,
       "max": 5,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days"
     }
   },
   "CWD": {
@@ -50,114 +58,134 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 30,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Days"
     },
     "TREND": {
       "min": -5,
       "max": 5,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -5,
       "max": 5,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days"
     }
   },
   "FH20MM": {
-    "name": "Frequency of Rainfall ≥ 20 mm (Events)",
+    "name": "Frequency of Rainfall \u2265 20 mm (Events)",
     "KLIMATOLOGI": {
       "min": 0,
       "max": 60,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Events"
     },
     "TREND": {
       "min": -3,
       "max": 3,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Events/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Events"
     }
   },
   "FH50MM": {
-    "name": "Frequency of Rainfall ≥ 50 mm (Events)",
+    "name": "Frequency of Rainfall \u2265 50 mm (Events)",
     "KLIMATOLOGI": {
       "min": 0,
       "max": 15,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Events"
     },
     "TREND": {
       "min": -1,
       "max": 1,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Events/decade"
     },
     "CHANGE": {
       "min": -50,
       "max": 50,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -3,
       "max": 3,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Events"
     }
   },
   "FH100MM": {
-    "name": "Frequency of Rainfall ≥ 100 mm (Events)",
+    "name": "Frequency of Rainfall \u2265 100 mm (Events)",
     "KLIMATOLOGI": {
       "min": 0,
       "max": 3,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Events"
     },
     "TREND": {
       "min": -0.3,
       "max": 0.3,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Events/decade"
     },
     "CHANGE": {
       "min": -100,
       "max": 100,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -1,
       "max": 1,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Events"
     }
   },
   "FH150MM": {
-    "name": "Frequency of Rainfall ≥ 150 mm (Events)",
+    "name": "Frequency of Rainfall \u2265 150 mm (Events)",
     "KLIMATOLOGI": {
       "min": 0,
       "max": 1,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Events"
     },
     "TREND": {
       "min": -0.1,
       "max": 0.1,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Events/decade"
     },
     "CHANGE": {
       "min": -100,
       "max": 100,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -0.3,
       "max": 0.3,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Events"
     }
   },
   "HH": {
@@ -165,114 +193,134 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 300,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Days"
     },
     "TREND": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days/decade"
     },
     "CHANGE": {
       "min": -20,
       "max": 20,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days"
     }
   },
   "HH20MM": {
-    "name": "Number of Days with Rainfall ≥ 20 mm (Days)",
+    "name": "Number of Days with Rainfall \u2265 20 mm (Days)",
     "KLIMATOLOGI": {
       "min": 0,
       "max": 60,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Days"
     },
     "TREND": {
       "min": -3,
       "max": 3,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days"
     }
   },
   "HH50MM": {
-    "name": "Number of Days with Rainfall ≥ 50 mm (Days)",
+    "name": "Number of Days with Rainfall \u2265 50 mm (Days)",
     "KLIMATOLOGI": {
       "min": 0,
       "max": 15,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Days"
     },
     "TREND": {
       "min": -1,
       "max": 1,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days/decade"
     },
     "CHANGE": {
       "min": -50,
       "max": 50,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -3,
       "max": 3,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days"
     }
   },
   "HH100MM": {
-    "name": "Number of Days with Rainfall ≥ 100 mm (Days)",
+    "name": "Number of Days with Rainfall \u2265 100 mm (Days)",
     "KLIMATOLOGI": {
       "min": 0,
       "max": 3,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Days"
     },
     "TREND": {
       "min": -0.3,
       "max": 0.3,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days/decade"
     },
     "CHANGE": {
       "min": -100,
       "max": 100,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -1,
       "max": 1,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days"
     }
   },
   "HH150MM": {
-    "name": "Number of Days with Rainfall ≥ 150 mm (Days)",
+    "name": "Number of Days with Rainfall \u2265 150 mm (Days)",
     "KLIMATOLOGI": {
       "min": 0,
       "max": 1,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "Days"
     },
     "TREND": {
       "min": -0.1,
       "max": 0.1,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days/decade"
     },
     "CHANGE": {
       "min": -100,
       "max": 100,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -0.3,
       "max": 0.3,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "Days"
     }
   },
   "PRCPTOT": {
@@ -280,22 +328,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 4000,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "mm"
     },
     "TREND": {
       "min": -50,
       "max": 50,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -500,
       "max": 500,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm"
     }
   },
   "R95P": {
@@ -303,22 +355,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 1500,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "mm"
     },
     "TREND": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm/decade"
     },
     "CHANGE": {
       "min": -50,
       "max": 50,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -300,
       "max": 300,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm"
     }
   },
   "R95PTOT": {
@@ -326,22 +382,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 60,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "%"
     },
     "TREND": {
       "min": -2,
       "max": 2,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     }
   },
   "R99P": {
@@ -349,22 +409,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 600,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "mm"
     },
     "TREND": {
       "min": -20,
       "max": 20,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm/decade"
     },
     "CHANGE": {
       "min": -100,
       "max": 100,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -150,
       "max": 150,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm"
     }
   },
   "R99PTOT": {
@@ -372,22 +436,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 30,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "%"
     },
     "TREND": {
       "min": -2,
       "max": 2,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%/decade"
     },
     "CHANGE": {
       "min": -50,
       "max": 50,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -5,
       "max": 5,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     }
   },
   "RX1DAY": {
@@ -395,22 +463,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 150,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "mm"
     },
     "TREND": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm"
     }
   },
   "RX5DAY": {
@@ -418,22 +490,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 250,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "mm"
     },
     "TREND": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -50,
       "max": 50,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm"
     }
   },
   "RX7DAY": {
@@ -441,22 +517,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 300,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "mm"
     },
     "TREND": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -60,
       "max": 60,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm"
     }
   },
   "RX10DAY": {
@@ -464,22 +544,26 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 350,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "mm"
     },
     "TREND": {
       "min": -15,
       "max": 15,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -70,
       "max": 70,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm"
     }
   },
   "SDII": {
@@ -487,275 +571,323 @@
     "KLIMATOLOGI": {
       "min": 0,
       "max": 20,
-      "palette": "viridis"
+      "palette": "viridis",
+      "unit": "mm/day"
     },
     "TREND": {
       "min": -2,
       "max": 2,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm/day/decade"
     },
     "CHANGE": {
       "min": -30,
       "max": 30,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -5,
       "max": 5,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "mm/day"
     }
   },
   "DTR": {
-    "name": "Diurnal Temperature Range (°C)",
+    "name": "Diurnal Temperature Range (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 4,
       "max": 14,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
       "min": -0.5,
       "max": 0.5,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -20,
       "max": 20,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -2,
       "max": 2,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "\u00b0C"
     }
   },
   "ETR": {
-    "name": "Extreme Temperature Range (°C)",
+    "name": "Extreme Temperature Range (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 8,
       "max": 25,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -20,
       "max": 20,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": -3,
       "max": 3,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "\u00b0C"
     }
   },
   "TMM": {
-    "name": "Mean of Daily Mean Temperature (°C)",
+    "name": "Mean of Daily Mean Temperature (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 20,
       "max": 34,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": 0,
       "max": 4,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     }
   },
   "TMN": {
-    "name": "Min of Daily Mean Temperature (°C)",
+    "name": "Min of Daily Mean Temperature (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 15,
       "max": 30,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": 0,
       "max": 4,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     }
   },
   "TMX": {
-    "name": "Max of Daily Mean Temperature (°C)",
+    "name": "Max of Daily Mean Temperature (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 22,
       "max": 36,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": 0,
       "max": 4,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     }
   },
   "TNM": {
-    "name": "Mean of Daily Minimum Temperature (°C)",
+    "name": "Mean of Daily Minimum Temperature (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 15,
       "max": 28,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": 0,
       "max": 4,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     }
   },
   "TNN": {
-    "name": "Min of Daily Minimum Temperature (°C)",
+    "name": "Min of Daily Minimum Temperature (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 10,
       "max": 28,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": 0,
       "max": 4,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     }
   },
   "TNX": {
-    "name": "Max of Daily Minimum Temperature (°C)",
+    "name": "Max of Daily Minimum Temperature (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 18,
       "max": 32,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": 0,
       "max": 4,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     }
   },
   "TXM": {
-    "name": "Mean of Daily Maximum Temperature (°C)",
+    "name": "Mean of Daily Maximum Temperature (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 25,
       "max": 38,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": 0,
       "max": 4,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     }
   },
   "TXN": {
-    "name": "Min of Daily Maximum Temperature (°C)",
+    "name": "Min of Daily Maximum Temperature (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 18,
       "max": 34,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": 0,
       "max": 4,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     }
   },
   "TXX": {
-    "name": "Max of Daily Maximum Temperature (°C)",
+    "name": "Max of Daily Maximum Temperature (\u00b0C)",
     "KLIMATOLOGI": {
       "min": 25,
       "max": 40,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     },
     "TREND": {
-      "min": -1,
-      "max": 1,
-      "palette": "rdbu"
+      "min": -0.5,
+      "max": 0.5,
+      "palette": "rdbu",
+      "unit": "\u00b0C/decade"
     },
     "CHANGE": {
       "min": -10,
       "max": 10,
-      "palette": "rdbu"
+      "palette": "rdbu",
+      "unit": "%"
     },
     "VALUE": {
       "min": 0,
       "max": 4,
-      "palette": "jet"
+      "palette": "jet",
+      "unit": "\u00b0C"
     }
   }
 }
