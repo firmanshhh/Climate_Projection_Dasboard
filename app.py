@@ -60,7 +60,7 @@ def parse_data_roots():
 
 
 # Path ke file konfigurasi skala warna (bisa di-override lewat COLOR_CONFIG env var)
-COLOR_CONFIG_PATH = os.environ.get("COLOR_CONFIG", "color_scales.json")
+COLOR_CONFIG_PATH = os.environ.get("COLOR_CONFIG", "config_colors.json")
 COLOR_CONFIG = {}
 
 
@@ -212,7 +212,7 @@ def read_nc(path):
 
     lat = ds["lat"].values if "lat" in ds.coords else ds["latitude"].values
     lon = ds["lon"].values if "lon" in ds.coords else ds["longitude"].values
-    z = ds[varname].values
+    z   = ds[varname].values
 
     # Pastikan urutan dimensi (lat, lon)
     if z.shape != (len(lat), len(lon)):
@@ -236,7 +236,7 @@ def index_page():
 @app.route("/api/ui_config")
 def api_ui_config():
     """Kembalikan konfigurasi mapping label untuk model dan skenario."""
-    path = os.environ.get("UI_CONFIG", "ui_config.json")
+    path = os.environ.get("UI_CONFIG", "config_ui.json")
     if os.path.exists(path):
         try:
             with open(path, "r", encoding="utf-8") as f:
@@ -250,6 +250,12 @@ def api_ui_config():
 def api_options():
     """Kembalikan seluruh pohon metadata (untuk mengisi dropdown bertingkat)."""
     return jsonify(INDEX)
+
+
+@app.route("/api/color_scales")
+def api_color_scales():
+    """Kembalikan color scales JSON untuk membaca nama variabel dan tipe index."""
+    return jsonify(COLOR_CONFIG)
 
 
 @app.route("/api/data")

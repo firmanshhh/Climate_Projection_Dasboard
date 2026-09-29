@@ -51,7 +51,8 @@
       "max": 10,
       "palette": "rdbu",
       "unit": "Days"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "CWD": {
     "name": "Consecutive Wet Days (Days)",
@@ -78,7 +79,8 @@
       "max": 5,
       "palette": "rdbu",
       "unit": "Days"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "FH20MM": {
     "name": "Frequency of Rainfall \u2265 20 mm (Events)",
@@ -105,7 +107,8 @@
       "max": 10,
       "palette": "rdbu",
       "unit": "Events"
-    }
+    },
+    "index_type": "Mean"
   },
   "FH50MM": {
     "name": "Frequency of Rainfall \u2265 50 mm (Events)",
@@ -132,7 +135,8 @@
       "max": 3,
       "palette": "rdbu",
       "unit": "Events"
-    }
+    },
+    "index_type": "Mean"
   },
   "FH100MM": {
     "name": "Frequency of Rainfall \u2265 100 mm (Events)",
@@ -159,7 +163,8 @@
       "max": 1,
       "palette": "rdbu",
       "unit": "Events"
-    }
+    },
+    "index_type": "Mean"
   },
   "FH150MM": {
     "name": "Frequency of Rainfall \u2265 150 mm (Events)",
@@ -186,7 +191,8 @@
       "max": 0.3,
       "palette": "rdbu",
       "unit": "Events"
-    }
+    },
+    "index_type": "Mean"
   },
   "HH": {
     "name": "Number of Rainy Days (Days)",
@@ -213,7 +219,8 @@
       "max": 30,
       "palette": "rdbu",
       "unit": "Days"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "HH20MM": {
     "name": "Number of Days with Rainfall \u2265 20 mm (Days)",
@@ -240,7 +247,8 @@
       "max": 10,
       "palette": "rdbu",
       "unit": "Days"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "HH50MM": {
     "name": "Number of Days with Rainfall \u2265 50 mm (Days)",
@@ -267,7 +275,8 @@
       "max": 3,
       "palette": "rdbu",
       "unit": "Days"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "HH100MM": {
     "name": "Number of Days with Rainfall \u2265 100 mm (Days)",
@@ -294,7 +303,8 @@
       "max": 1,
       "palette": "rdbu",
       "unit": "Days"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "HH150MM": {
     "name": "Number of Days with Rainfall \u2265 150 mm (Days)",
@@ -321,7 +331,8 @@
       "max": 0.3,
       "palette": "rdbu",
       "unit": "Days"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "PRCPTOT": {
     "name": "Annual Total Wet-Day Precipitation (mm)",
@@ -348,7 +359,8 @@
       "max": 500,
       "palette": "rdbu",
       "unit": "mm"
-    }
+    },
+    "index_type": "Mean"
   },
   "R95P": {
     "name": "Annual Total Precipitation from Very Wet Days > 95th Percentile (mm)",
@@ -375,7 +387,8 @@
       "max": 300,
       "palette": "rdbu",
       "unit": "mm"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "R95PTOT": {
     "name": "Contribution of Very Wet Days > 95th Percentile to Total Precipitation (%)",
@@ -402,7 +415,8 @@
       "max": 10,
       "palette": "rdbu",
       "unit": "%"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "R99P": {
     "name": "Annual Total Precipitation from Extremely Wet Days > 99th Percentile (mm)",
@@ -429,7 +443,8 @@
       "max": 150,
       "palette": "rdbu",
       "unit": "mm"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "R99PTOT": {
     "name": "Contribution of Extremely Wet Days > 99th Percentile to Total Precipitation (%)",
@@ -456,7 +471,8 @@
       "max": 5,
       "palette": "rdbu",
       "unit": "%"
-    }
+    },
+    "index_type": "Spells and count"
   },
   "RX1DAY": {
     "name": "Max 1-Day Precipitation Amount (mm)",
@@ -483,7 +499,8 @@
       "max": 30,
       "palette": "rdbu",
       "unit": "mm"
-    }
+    },
+    "index_type": "Extreme"
   },
   "RX5DAY": {
     "name": "Max 5-Day Precipitation Amount (mm)",
@@ -510,7 +527,8 @@
       "max": 50,
       "palette": "rdbu",
       "unit": "mm"
-    }
+    },
+    "index_type": "Extreme"
   },
   "RX7DAY": {
     "name": "Max 7-Day Precipitation Amount (mm)",
@@ -537,7 +555,8 @@
       "max": 60,
       "palette": "rdbu",
       "unit": "mm"
-    }
+    },
+    "index_type": "Extreme"
   },
   "RX10DAY": {
     "name": "Max 10-Day Precipitation Amount (mm)",
@@ -564,7 +583,8 @@
       "max": 70,
       "palette": "rdbu",
       "unit": "mm"
-    }
+    },
+    "index_type": "Extreme"
   },
   "SDII": {
     "name": "Simple Precipitation Intensity Index (mm/day)",
@@ -591,7 +611,8 @@
       "max": 5,
       "palette": "rdbu",
       "unit": "mm/day"
-    }
+    },
+    "index_type": "Mean"
   },
   "DTR": {
     "name": "Diurnal Temperature Range (\u00b0C)",
@@ -618,7 +639,8 @@
       "max": 2,
       "palette": "rdbu",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Mean"
   },
   "ETR": {
     "name": "Extreme Temperature Range (\u00b0C)",
@@ -645,7 +667,8 @@
       "max": 3,
       "palette": "rdbu",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Extreme"
   },
   "TMM": {
     "name": "Mean of Daily Mean Temperature (\u00b0C)",
@@ -672,7 +695,8 @@
       "max": 4,
       "palette": "jet",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Mean"
   },
   "TMN": {
     "name": "Min of Daily Mean Temperature (\u00b0C)",
@@ -699,7 +723,8 @@
       "max": 4,
       "palette": "jet",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Extreme"
   },
   "TMX": {
     "name": "Max of Daily Mean Temperature (\u00b0C)",
@@ -726,7 +751,8 @@
       "max": 4,
       "palette": "jet",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Extreme"
   },
   "TNM": {
     "name": "Mean of Daily Minimum Temperature (\u00b0C)",
@@ -753,7 +779,8 @@
       "max": 4,
       "palette": "jet",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Extreme"
   },
   "TNN": {
     "name": "Min of Daily Minimum Temperature (\u00b0C)",
@@ -780,7 +807,8 @@
       "max": 4,
       "palette": "jet",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Extreme"
   },
   "TNX": {
     "name": "Max of Daily Minimum Temperature (\u00b0C)",
@@ -807,7 +835,8 @@
       "max": 4,
       "palette": "jet",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Extreme"
   },
   "TXM": {
     "name": "Mean of Daily Maximum Temperature (\u00b0C)",
@@ -834,7 +863,8 @@
       "max": 4,
       "palette": "jet",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Extreme"
   },
   "TXN": {
     "name": "Min of Daily Maximum Temperature (\u00b0C)",
@@ -861,7 +891,8 @@
       "max": 4,
       "palette": "jet",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Extreme"
   },
   "TXX": {
     "name": "Max of Daily Maximum Temperature (\u00b0C)",
@@ -888,6 +919,7 @@
       "max": 4,
       "palette": "jet",
       "unit": "\u00b0C"
-    }
+    },
+    "index_type": "Extreme"
   }
 }
