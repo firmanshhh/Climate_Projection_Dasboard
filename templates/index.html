@@ -7,6 +7,7 @@
   <title>Dashboard Proyeksi Iklim</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
       --bg: #ffffff;
@@ -36,23 +37,29 @@
       cursor: pointer;
       color: var(--accent);
     }
+
     .custom-leaflet-btn:hover {
       background: #f0f4f8;
     }
+
     .custom-leaflet-group {
-      box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
       margin-top: 10px;
     }
+
     .custom-leaflet-group .custom-leaflet-btn {
       border-bottom: none;
     }
+
     .custom-leaflet-group .custom-leaflet-btn:last-child {
       border-bottom: 1px solid var(--accent);
     }
+
     .custom-leaflet-single {
-      box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
       margin-top: 10px;
     }
+
     .custom-leaflet-single .custom-leaflet-btn {
       border-bottom: 1px solid var(--accent);
     }
@@ -93,9 +100,14 @@
     }
 
     .brand .collapse-btn {
-      font-size: 1.2rem;
+      font-size: 2rem;
       cursor: pointer;
       color: var(--muted);
+      transition: color 0.2s;
+    }
+
+    .brand .collapse-btn:hover {
+      color: var(--text);
     }
 
     #map-header {
@@ -134,6 +146,84 @@
     #topbar-meta b {
       color: var(--text);
       font-weight: 600;
+    }
+
+    /* ---------- Custom Select ---------- */
+    .custom-select-wrapper {
+      position: relative;
+      user-select: none;
+      width: 100%;
+    }
+
+    .custom-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #334155;
+      background: #fff;
+      border: 1px solid #93c5fd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .custom-select-trigger:hover {
+      border-color: #60a5fa;
+    }
+
+    .custom-select-trigger.open {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .custom-select-trigger svg {
+      transition: transform 0.2s;
+      stroke: #64748b;
+    }
+
+    .custom-select-trigger.open svg {
+      transform: rotate(180deg);
+    }
+
+    .custom-select-options {
+      position: absolute;
+      bottom: calc(100% + 4px);
+      top: auto;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 9999;
+      display: none;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .custom-select-wrapper.open .custom-select-options {
+      display: block;
+    }
+
+    .custom-select-option {
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      color: #334155;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .custom-select-option:hover {
+      background: #f8fafc;
+    }
+
+    .custom-select-option.selected {
+      font-weight: 600;
+      color: #1e3a8a;
+      background: #f1f5f9;
     }
 
     /* ---------- Main layout ---------- */
@@ -186,20 +276,24 @@
     .colorbar-container {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+
     .unit-lbl {
       font-size: 0.9rem;
       color: #374151;
-      margin-bottom: 6px;
+      font-weight: 500;
     }
+
     .colorbar-wrapper {
       position: relative;
     }
+
     .colorbar-inputs {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       padding: 0 4px;
     }
+
     .bare-input {
       width: 60px;
       padding: 0 !important;
@@ -209,31 +303,38 @@
       color: #1f2937 !important;
       font-weight: 500;
     }
+
     .bare-input:focus {
       outline: none !important;
     }
+
     .bare-input::-webkit-outer-spin-button,
     .bare-input::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
+
     .bare-input[type=number] {
       -moz-appearance: textfield;
     }
+
     .colorbar-track-area {
       display: flex;
       flex-direction: column;
       align-items: stretch;
       padding: 0 4px;
     }
+
     .colorbar-bridge {
       background: #e9ecef;
       height: 16px;
     }
+
     .colorbar-knobs {
       position: relative;
       height: 14px;
     }
+
     .colorbar-line {
       position: absolute;
       left: 0;
@@ -243,6 +344,7 @@
       background: #4b5563;
       border-radius: 2px;
     }
+
     .colorbar-knob {
       width: 14px;
       height: 14px;
@@ -251,12 +353,14 @@
       z-index: 2;
       cursor: pointer;
     }
+
     #colorbar-strip {
       position: relative;
       height: 24px;
       border-radius: 0 0 6px 6px;
       background: linear-gradient(to right, #053061, #2166ac, #4393c3, #92c5de, #d1e5f0, #f7f7f7, #fddbc7, #f4a582, #d6604d, #b2182b, #67001f);
     }
+
     .colorbar-ticks {
       display: flex;
       justify-content: space-between;
@@ -265,11 +369,13 @@
       margin-top: 6px;
       padding: 0 2px;
     }
+
     #palette-controls {
       display: flex;
       gap: 16px;
       margin-top: 20px;
     }
+
     .control-btn {
       display: flex;
       align-items: center;
@@ -278,6 +384,7 @@
       color: #4b5563;
       cursor: pointer;
     }
+
     .control-btn:hover {
       color: #111827;
     }
@@ -331,9 +438,6 @@
       font-family: inherit;
     }
 
-    .leaflet-top.leaflet-left {
-      margin-top: 90px;
-    }
 
     #status {
       position: absolute;
@@ -399,9 +503,19 @@
       top: 50%;
       transform: translateY(-50%);
       height: 4px;
-      background: #ebd8d8;
+      background: #f1e5e6;
       z-index: 1;
       border-radius: 2px;
+    }
+
+    #timeline-track .line-past {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: #c3cae0;
+      border-radius: 2px;
+      transition: width 0.3s ease;
     }
 
     #timeline-track .line-fill {
@@ -409,9 +523,9 @@
       left: 0;
       top: 0;
       bottom: 0;
-      background: #4a4a4a;
+      background: #555555;
       border-radius: 2px;
-      transition: width 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     .tl-point {
@@ -481,51 +595,149 @@
       font-size: 0.95rem;
       background: #fff;
     }
-  
+
     /* Modal CSS */
     #var-modal-overlay {
-        display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-        background: transparent; z-index: 9999;
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: transparent;
+      z-index: 9999;
     }
-    #btn-open-var-modal svg { transition: transform 0.2s ease; }
-    #btn-open-var-modal.open svg { transform: rotate(180deg); }
+
+    #btn-open-var-modal svg {
+      transition: transform 0.2s ease;
+    }
+
+    #btn-open-var-modal.open svg {
+      transform: rotate(180deg);
+    }
+
     #var-modal-content {
-        background: #fff; border-radius: 8px; width: 850px; max-width: 95%; height: 500px; 
-        display: flex; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden;
+      background: #fff;
+      border-radius: 8px;
+      width: 850px;
+      max-width: 95%;
+      height: 500px;
+      display: flex;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
     }
+
     #var-modal-sidebar {
-        width: 220px; border-right: 1px solid var(--border); background: #f9fafb; display: flex; flex-direction: column;
+      width: 220px;
+      border-right: 1px solid var(--border);
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
     }
+
     .var-cat-item {
-        padding: 12px 16px; cursor: pointer; color: #475569; font-size: 0.9rem; display: flex; align-items: center; gap: 12px; border-radius: 4px;
+      padding: 12px 16px;
+      cursor: pointer;
+      color: #475569;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 4px;
     }
-    .var-cat-item:hover { background: #f1f5f9; }
-    .var-cat-item.active { background: #e2e8f0; font-weight: 600; color: #1e3a8a; border-left: 3px solid #1e3a8a; }
+
+    .var-cat-item:hover {
+      background: #f1f5f9;
+    }
+
+    .var-cat-item.active {
+      background: #e2e8f0;
+      font-weight: 600;
+      color: #1e3a8a;
+      border-left: 3px solid #1e3a8a;
+    }
+
     .var-tab-item {
-        cursor: pointer; font-size: 0.9rem; color: #64748b; display: flex; align-items: center; gap: 8px; padding-bottom: 8px; white-space: nowrap; margin-bottom: -1px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      white-space: nowrap;
+      margin-bottom: -1px;
     }
-    .var-tab-item.active { color: #1e3a8a; font-weight: 600; border-bottom: 2px solid #1e3a8a; }
+
+    .var-tab-item.active {
+      color: #1e3a8a;
+      font-weight: 600;
+      border-bottom: 2px solid #1e3a8a;
+    }
+
     .var-card {
-        padding: 16px; font-size: 0.85rem; color: #334155; cursor: pointer; background: #fff; transition: background 0.2s;
-        border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.4;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #334155;
+      cursor: pointer;
+      background: #fff;
+      transition: background 0.2s;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.4;
     }
-    .var-card:hover { background: #f8fafc; color: var(--accent); }
-    .var-card.active { background: #f8fafc; font-weight: 600; color: var(--accent); }
 
-      @keyframes slideDownFadeIn {
-        from { opacity: 0; transform: translateY(-12px); }
-        to { opacity: 1; transform: translateY(0); }
+    .var-card:hover {
+      background: #f8fafc;
+      color: var(--accent);
     }
+
+    .var-card.active {
+      background: #f8fafc;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    @keyframes slideDownFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     #var-modal-content {
-        animation: slideDownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: slideDownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-
   </style>
 </head>
 
 <body>
 
   <div id="layout">
+    <div id="sidebar-mini"
+      style="display: none; width: 64px; flex-shrink: 0; border-right: 1px solid var(--border); background: #fff; flex-direction: column; align-items: center; padding-top: 20px; gap: 16px; z-index: 10; box-shadow: 2px 0 5px rgba(0,0,0,0.05);">
+      <div id="btn-info" title="Information"
+        style="width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #1e3a8a; color: #1e3a8a; display: flex; align-items: center; justify-content: center; cursor: pointer; font-family: serif; font-size: 20px; font-weight: 600;">
+        i
+      </div>
+      <div id="btn-expand-sidebar" title="Expand Sidebar"
+        style="width: 36px; height: 36px; border: 1.5px solid #334155; color: #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="13 17 18 12 13 7"></polyline>
+          <polyline points="6 17 11 12 6 7"></polyline>
+        </svg>
+      </div>
+    </div>
     <div id="sidebar">
       <div class="brand">
         <h1>Interactive Climate Atlas</h1>
@@ -541,12 +753,16 @@
         <label>Select a variable:</label>
         <select id="sel-variabel"></select>
       </div>
-      
+
       <div class="field" style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 8px;">
-        <label style="font-size: 0.85rem; color: #64748b; margin-bottom: 6px; display: block;">Select a variable:</label>
-        <div id="btn-open-var-modal" onclick="openVarModal()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
-           <span id="current-var-label" style="font-weight: 500; color: #1e293b; font-size: 1.05rem;">Loading...</span>
-           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <label style="font-size: 0.85rem; color: #64748b; margin-bottom: 6px; display: block;">Select a
+          variable:</label>
+        <div id="btn-open-var-modal" onclick="openVarModal()"
+          style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+          <span id="current-var-label" style="font-weight: 500; color: #1e293b; font-size: 1.05rem;">Loading...</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </div>
       </div>
 
@@ -556,15 +772,23 @@
       </div>
       <div class="field" style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 8px;">
         <label style="font-size: 0.85rem; color: #64748b; margin-bottom: 6px; display: block;">Select a dataset:</label>
-        <div id="btn-open-ds-modal" onclick="openDsModal()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
-           <span id="current-ds-label" style="font-weight: 500; color: #1e293b; font-size: 1.05rem;">Loading...</span>
-           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <div id="btn-open-ds-modal" onclick="openDsModal()"
+          style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
+          <span id="current-ds-label" style="font-weight: 500; color: #1e293b; font-size: 1.05rem;">Loading...</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
         </div>
       </div>
 
       <div class="field">
         <label>Select a model:</label>
         <select id="sel-model"></select>
+      </div>
+
+      <div class="field">
+        <label>Season or Month:</label>
+        <select id="sel-aggregasi"></select>
       </div>
 
       <div class="field">
@@ -582,46 +806,82 @@
           <div class="colorbar-track-area">
             <div class="colorbar-knobs" id="cb-knobs">
               <div class="colorbar-line"></div>
-              <div class="colorbar-knob" id="cb-knob-left" style="position:absolute; top:0; left:0; transform:translateX(-50%);"></div>
-              <div class="colorbar-knob" id="cb-knob-right" style="position:absolute; top:0; left:100%; transform:translateX(-50%);"></div>
+              <div class="colorbar-knob" id="cb-knob-left"
+                style="position:absolute; top:0; left:0; transform:translateX(-50%);"></div>
+              <div class="colorbar-knob" id="cb-knob-right"
+                style="position:absolute; top:0; left:100%; transform:translateX(-50%);"></div>
             </div>
             <div class="colorbar-bridge" style="clip-path:polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);"></div>
             <div id="colorbar-strip">
-              <div id="colorbar-cursor-line" style="display:none; position:absolute; top:0; bottom:0; width:2px; background:#000; z-index:999; pointer-events:none; transition: left 0.05s linear; margin-left:-1px;"></div>
+              <div id="colorbar-cursor-line"
+                style="display:none; position:absolute; top:0; bottom:0; width:2px; background:#000; z-index:999; pointer-events:none; transition: left 0.05s linear; margin-left:-1px;">
+              </div>
             </div>
           </div>
         </div>
         <div id="colorbar-ticks" class="colorbar-ticks"></div>
         <div id="palette-controls" style="position:relative;">
-           <div class="control-btn" id="btn-palette" onclick="const p = document.getElementById('palette-popup'); p.style.display = p.style.display === 'none' ? 'block' : 'none'; event.stopPropagation();">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 0 1-6.77-14.86c.21-.24.56-.2.72.07.6 1.05 1.5 2.5 3 2.5s2.5-1.5 2.5-3c0-.6-.35-1.12-.87-1.3A9.03 9.03 0 0 1 12 3a9 9 0 1 1 0 18z"></path></svg>
-              <span>Palette</span>
-           </div>
-           <div class="control-btn" id="btn-autofit" onclick="autoRange=true; if(lastPayload) drawOverlay(lastPayload);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="8 8 4 12 8 16"></polyline><polyline points="16 16 20 12 16 8"></polyline></svg>
-              <span>Autofit</span>
-           </div>
-           <div class="control-btn" id="btn-reset" onclick="autoRange=true; if(lastPayload) drawOverlay(lastPayload);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
-              <span>Reset</span>
-           </div>
+          <div class="control-btn" id="btn-palette"
+            onclick="const p = document.getElementById('palette-popup'); p.style.display = p.style.display === 'none' ? 'block' : 'none'; event.stopPropagation();">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M12 21a9 9 0 0 1-6.77-14.86c.21-.24.56-.2.72.07.6 1.05 1.5 2.5 3 2.5s2.5-1.5 2.5-3c0-.6-.35-1.12-.87-1.3A9.03 9.03 0 0 1 12 3a9 9 0 1 1 0 18z">
+              </path>
+            </svg>
+            <span>Palette</span>
+          </div>
+          <div class="control-btn" id="btn-autofit" onclick="autoRange=true; if(lastPayload) drawOverlay(lastPayload);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <polyline points="8 8 4 12 8 16"></polyline>
+              <polyline points="16 16 20 12 16 8"></polyline>
+            </svg>
+            <span>Autofit</span>
+          </div>
+          <div class="control-btn" id="btn-reset" onclick="autoRange=true; if(lastPayload) drawOverlay(lastPayload);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <polyline points="3 3 3 8 8 8"></polyline>
+            </svg>
+            <span>Reset</span>
+          </div>
 
-           <div id="palette-popup" onclick="event.stopPropagation();" style="display:none; position:absolute; top:calc(100% + 8px); left:0; background:#fff; border:1px solid #d1d5db; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.15); padding:10px; z-index:9999; width: 180px;">
-              <div class="palette-list" id="palette-list" style="display:flex; flex-direction:column; gap:6px;"></div>
-              <hr style="border:none; border-top:1px solid #e5e7eb; margin:10px 0;">
-              <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; color:#374151; cursor:pointer;">
-                 <input type="checkbox" id="chk-discrete" onchange="document.getElementById('bins-wrapper').style.display = this.checked ? 'flex' : 'none'; if(lastPayload) drawOverlay(lastPayload);"> Discrete
-              </label>
-              <div id="bins-wrapper" style="display:none; align-items:center; justify-content:space-between; margin-top:8px; font-size:0.85rem; color:#374151;">
-                 <span>Jumlah Kelas:</span>
-                 <input type="number" id="in-bins" value="8" min="2" max="20" style="width:50px; padding:2px 4px; border:1px solid #d1d5db; border-radius:4px;" onchange="if(lastPayload) drawOverlay(lastPayload);">
-              </div>
-           </div>
+          <div id="palette-popup" onclick="event.stopPropagation();"
+            style="display:none; position:absolute; top:calc(100% + 8px); left:0; background:#fff; border:1px solid #d1d5db; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.15); padding:10px; z-index:9999; width: 180px;">
+            <div class="palette-list" id="palette-list" style="display:flex; flex-direction:column; gap:6px;"></div>
+            <hr style="border:none; border-top:1px solid #e5e7eb; margin:10px 0;">
+            <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; color:#374151; cursor:pointer;">
+              <input type="checkbox" id="chk-discrete"
+                onchange="window.toggleDiscrete(this.checked);">
+              Discrete
+            </label>
+            <div id="bins-wrapper"
+              style="display:none; align-items:center; justify-content:space-between; margin-top:8px; font-size:0.85rem; color:#374151;">
+              <span>Jumlah Kelas:</span>
+              <input type="number" id="in-bins" value="8" min="2" max="20"
+                style="width:50px; padding:2px 4px; border:1px solid #d1d5db; border-radius:4px;"
+                onchange="if(lastPayload) drawOverlay(lastPayload);">
+            </div>
+          </div>
         </div>
         <div id="opacity-row" style="margin-top:16px;">
           <label style="font-size:0.78rem; color:var(--muted);">Opacity layer</label>
           <input type="range" id="in-opacity" min="0.1" max="1" step="0.05" value="0.8">
         </div>
+        
+        <div class="field" style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+
+          <label id="summary-main-title" style="font-size: 0.85rem; color: #64748b; margin-bottom: 6px; display: block;">Data Summary:</label>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; text-align: center;">
+            <div id="summary-sub-title" style="font-size: 0.75rem; color: #64748b; margin-bottom: 4px;">Rata-Rata Area</div>
+            <div id="indonesia-average-val" style="font-weight: 600; color: #0f172a; font-size: 1.25rem;">-</div>
+            <div id="indonesia-average-loading" style="font-size: 0.75rem; color: #3b82f6; display: none;">Menghitung...</div>
+          </div>
+        </div>
+        
       </div>
     </div>
 
@@ -633,12 +893,14 @@
       <div id="status"></div>
       <div id="map"></div>
 
-      
+
       <div id="timeline">
         <div id="timeline-left">
           <div class="timeline-label" id="timeline-title">Periode</div>
           <div id="timeline-track">
-            <div class="line"><div class="line-fill" id="track-fill"></div></div>
+            <div class="line">
+              <div class="line-fill" id="track-fill"></div>
+            </div>
           </div>
         </div>
         <div id="scenario-wrap">
@@ -658,7 +920,23 @@
     let lastPayload = null;
     let map = null;
     let currentOverlay = null;
-    window.isPixelated = true;
+    let isGetPointInfoActive = false;
+    let pointInfoMarker = null;
+    let isComparing = false;
+    let compareOverlay = null;
+    window.isPixelated = false;
+    
+    window.toggleDiscrete = function(isDiscrete) {
+        const chk = document.getElementById('chk-discrete');
+        if (chk && chk.checked !== isDiscrete) chk.checked = isDiscrete;
+        const bw = document.getElementById('bins-wrapper');
+        if (bw) bw.style.display = isDiscrete ? 'flex' : 'none';
+        
+        window.isPixelated = isDiscrete;
+        if (window.syncModeButton) window.syncModeButton();
+        
+        if (lastPayload) drawOverlay(lastPayload);
+    };
 
     /* ---------- Peta dasar (Leaflet) ---------- */
     function initMap() {
@@ -668,151 +946,333 @@
         maxZoom: 19
       }).addTo(map);
 
+      // Add BMKG Logo
+      const LogoControl = L.Control.extend({
+        options: { position: 'topleft' },
+        onAdd: function (map) {
+          const img = L.DomUtil.create('img');
+          img.src = '/static/icons/BMKG_White.png';
+          img.style.width = '70px';
+          img.style.marginTop = '100px'; // Below topbar
+          img.style.marginLeft = '20px';
+          img.style.filter = 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))';
+          return img;
+        }
+      });
+      map.addControl(new LogoControl());
+
       // Custom Controls: FullScreen, Zoom In, Mode, Zoom Out
       // Custom Controls: FullScreen, Mode, Zoom Group
       const CustomControls = L.Control.extend({
         options: { position: 'topright' },
         onAdd: function (map) {
-             const wrap = L.DomUtil.create('div');
-             wrap.style.marginTop = '110px'; // Push down further to avoid topbar
+          const wrap = L.DomUtil.create('div');
+          wrap.style.marginTop = '90px'; // Below topbar
 
-             // Fullscreen
-             const fsGroup = L.DomUtil.create('div', 'custom-leaflet-single leaflet-control', wrap);
-             const btnFs = L.DomUtil.create('div', 'custom-leaflet-btn', fsGroup);
-             btnFs.title = "Enter Full Screen";
-             btnFs.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
+          // Fullscreen
+          const fsGroup = L.DomUtil.create('div', 'custom-leaflet-single leaflet-control', wrap);
+          const btnFs = L.DomUtil.create('div', 'custom-leaflet-btn', fsGroup);
+          btnFs.title = "Enter Full Screen";
+          btnFs.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
 
-             L.DomEvent.on(btnFs, 'click', function (e) {
-                 L.DomEvent.preventDefault(e);
-                 const mapContainer = document.getElementById('map');
-                 if (!document.fullscreenElement) {
-                     if (mapContainer.requestFullscreen) mapContainer.requestFullscreen();
-                     else if (mapContainer.webkitRequestFullscreen) mapContainer.webkitRequestFullscreen();
-                     else if (mapContainer.msRequestFullscreen) mapContainer.msRequestFullscreen();
-                 } else {
-                     if (document.exitFullscreen) document.exitFullscreen();
-                     else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-                     else if (document.msExitFullscreen) document.msExitFullscreen();
-                 }
-             });
+          L.DomEvent.on(btnFs, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            const mapContainer = document.getElementById('map');
+            if (!document.fullscreenElement) {
+              if (mapContainer.requestFullscreen) mapContainer.requestFullscreen();
+              else if (mapContainer.webkitRequestFullscreen) mapContainer.webkitRequestFullscreen();
+              else if (mapContainer.msRequestFullscreen) mapContainer.msRequestFullscreen();
+            } else {
+              if (document.exitFullscreen) document.exitFullscreen();
+              else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+              else if (document.msExitFullscreen) document.msExitFullscreen();
+            }
+          });
 
-             document.addEventListener('fullscreenchange', function() {
-                  if (document.fullscreenElement) {
-                      btnFs.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3h3M21 8h-3V5M3 16h3v3M16 21v-3h3"></path></svg>`;
-                      btnFs.title = "Exit Full Screen";
-                  } else {
-                      btnFs.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
-                      btnFs.title = "Enter Full Screen";
-                  }
-             });
+          document.addEventListener('fullscreenchange', function () {
+            if (document.fullscreenElement) {
+              btnFs.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3h3M21 8h-3V5M3 16h3v3M16 21v-3h3"></path></svg>`;
+              btnFs.title = "Exit Full Screen";
+            } else {
+              btnFs.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
+              btnFs.title = "Enter Full Screen";
+            }
+          });
 
-             // Mode Toggle (Standalone)
-             const modeGroup = L.DomUtil.create('div', 'custom-leaflet-single leaflet-control', wrap);
-             const btnMode = L.DomUtil.create('div', 'custom-leaflet-btn', modeGroup);
-             btnMode.title = window.isPixelated ? "Mode: Sharp (Pixelated)" : "Mode: Smooth (Interpolated)";
-             const iconSharp = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8"></rect><rect x="13" y="3" width="8" height="8"></rect><rect x="3" y="13" width="8" height="8"></rect><rect x="13" y="13" width="8" height="8"></rect></svg>`;
-             const iconSmooth = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>`;
-             
-             btnMode.innerHTML = window.isPixelated ? iconSharp : iconSmooth;
-             L.DomEvent.on(btnMode, 'click', function(e) {
-                 L.DomEvent.preventDefault(e);
-                 window.isPixelated = !window.isPixelated;
-                 if (window.isPixelated) {
-                     btnMode.innerHTML = iconSharp;
-                     btnMode.title = "Mode: Sharp (Pixelated)";
-                 } else {
-                     btnMode.innerHTML = iconSmooth;
-                     btnMode.title = "Mode: Smooth (Interpolated)";
-                 }
-                 if (currentOverlay && currentOverlay.getElement()) {
-                    if (window.isPixelated) L.DomUtil.addClass(currentOverlay.getElement(), 'pixelated-layer');
-                    else L.DomUtil.removeClass(currentOverlay.getElement(), 'pixelated-layer');
-                 }
-             });
+          // Mode Toggle (Standalone)
+          const modeGroup = L.DomUtil.create('div', 'custom-leaflet-single leaflet-control', wrap);
+          const btnMode = L.DomUtil.create('div', 'custom-leaflet-btn', modeGroup);
+          btnMode.title = window.isPixelated ? "Mode: Sharp (Pixelated)" : "Mode: Smooth (Interpolated)";
+          const iconSharp = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8"></rect><rect x="13" y="3" width="8" height="8"></rect><rect x="3" y="13" width="8" height="8"></rect><rect x="13" y="13" width="8" height="8"></rect></svg>`;
+          const iconSmooth = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>`;
 
-             // Stack Group (Zoom In, Reset View, Zoom Out)
-             const stack = L.DomUtil.create('div', 'custom-leaflet-group leaflet-control', wrap);
-             
-             // Zoom In
-             const btnZoomIn = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
-             btnZoomIn.title = "Zoom In";
-             btnZoomIn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`;
-             L.DomEvent.on(btnZoomIn, 'click', function(e) {
-                 L.DomEvent.preventDefault(e);
-                 map.zoomIn();
-             });
+          btnMode.innerHTML = window.isPixelated ? iconSharp : iconSmooth;
+          window.syncModeButton = function() {
+            if (window.isPixelated) {
+              btnMode.innerHTML = iconSharp;
+              btnMode.title = "Mode: Sharp (Pixelated)";
+            } else {
+              btnMode.innerHTML = iconSmooth;
+              btnMode.title = "Mode: Smooth (Interpolated)";
+            }
+          };
+          window.syncModeButton();
 
-             // Reset Map View
-             const btnReset = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
-             btnReset.title = "Reset View";
-             btnReset.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-dasharray="4 4"></rect><rect x="8" y="8" width="8" height="8" rx="1" ry="1" fill="none"></rect></svg>`;
-             L.DomEvent.on(btnReset, 'click', function(e) {
-                 L.DomEvent.preventDefault(e);
-                 map.setView([0, 115], 5);
-             });
+          L.DomEvent.on(btnMode, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            window.toggleDiscrete(!window.isPixelated);
+          });
 
-             // Zoom Out
-             const btnZoomOut = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
-             btnZoomOut.title = "Zoom Out";
-             btnZoomOut.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`;
-             L.DomEvent.on(btnZoomOut, 'click', function(e) {
-                 L.DomEvent.preventDefault(e);
-                 map.zoomOut();
-             });
+          // Stack Group (Zoom In, Reset View, Zoom Out)
+          const stack = L.DomUtil.create('div', 'custom-leaflet-group leaflet-control', wrap);
 
-             return wrap;
+          // Zoom In
+          const btnZoomIn = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
+          btnZoomIn.title = "Zoom In";
+          btnZoomIn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`;
+          L.DomEvent.on(btnZoomIn, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            map.zoomIn();
+          });
+
+          // Reset Map View
+          const btnReset = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
+          btnReset.title = "Reset View";
+          btnReset.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-dasharray="4 4"></rect><rect x="8" y="8" width="8" height="8" rx="1" ry="1" fill="none"></rect></svg>`;
+          L.DomEvent.on(btnReset, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            map.setView([0, 115], 5);
+          });
+
+          // Zoom Out
+          const btnZoomOut = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
+          btnZoomOut.title = "Zoom Out";
+          btnZoomOut.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`;
+          L.DomEvent.on(btnZoomOut, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            map.zoomOut();
+          });
+
+          // Compare Split Screen
+          const btnCompare = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
+          btnCompare.title = "Compare this variable with other project";
+          btnCompare.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"></line><polyline points="16 5 20 9 16 13"></polyline><line x1="20" y1="15" x2="4" y2="15"></line><polyline points="8 11 4 15 8 19"></polyline></svg>`;
+          L.DomEvent.on(btnCompare, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            openCompareModal();
+          });
+
+          // Get Point Info
+          const btnPointInfo = L.DomUtil.create('div', 'custom-leaflet-btn', stack);
+          btnPointInfo.title = "Get Point Info";
+          btnPointInfo.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(45 12 12)"><line x1="12" y1="17" x2="12" y2="22"></line><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path></g></svg>`;
+          L.DomEvent.on(btnPointInfo, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            isGetPointInfoActive = !isGetPointInfoActive;
+            if (isGetPointInfoActive) {
+                btnPointInfo.style.backgroundColor = '#2563eb';
+                btnPointInfo.style.color = 'white';
+                document.getElementById('map').style.cursor = 'crosshair';
+            } else {
+                btnPointInfo.style.backgroundColor = '';
+                btnPointInfo.style.color = '';
+                document.getElementById('map').style.cursor = '';
+                if (pointInfoMarker) {
+                    map.removeLayer(pointInfoMarker);
+                    pointInfoMarker = null;
+                }
+            }
+          });
+
+          const stack2 = L.DomUtil.create('div', 'custom-leaflet-group leaflet-control', wrap);
+          stack2.style.marginTop = '10px';
+
+          // Download Map
+          const btnDownload = L.DomUtil.create('div', 'custom-leaflet-btn', stack2);
+          btnDownload.title = "Download Map as PNG";
+          btnDownload.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>`;
+          L.DomEvent.on(btnDownload, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            downloadMapAsPNG();
+          });
+
+          // Download ZIP
+          const btnDownloadTiff = L.DomUtil.create('div', 'custom-leaflet-btn', stack2);
+          btnDownloadTiff.title = "Download map as ZIP (NC, TIF, CSV)";
+          btnDownloadTiff.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>`;
+          L.DomEvent.on(btnDownloadTiff, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            downloadMapAsGeoTIFF();
+          });
+
+          // Stack 3: Mask Indonesia
+          const stack3 = L.DomUtil.create('div', 'custom-leaflet-group leaflet-control', wrap);
+          stack3.style.marginTop = '10px';
+          const btnMaskIndo = L.DomUtil.create('div', 'custom-leaflet-btn', stack3);
+          btnMaskIndo.title = "Potong Visual Daratan RI Saja";
+          // Scissors icon
+          btnMaskIndo.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>`;
+          window.isMaskIndo = false;
+          
+          L.DomEvent.on(btnMaskIndo, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            window.isMaskIndo = !window.isMaskIndo;
+            
+            if(window.isMaskIndo) {
+                btnMaskIndo.style.backgroundColor = '#f1f5f9';
+                btnMaskIndo.style.color = '#1e3a8a';
+                const subTitle = document.getElementById('summary-sub-title');
+                if(subTitle) subTitle.textContent = 'Rata-Rata Spasial Daratan Indonesia';
+            } else {
+                btnMaskIndo.style.backgroundColor = '';
+                btnMaskIndo.style.color = '';
+                const subTitle = document.getElementById('summary-sub-title');
+                if(subTitle) subTitle.textContent = 'Rata-Rata Area';
+            }
+
+            if (typeof loadPlot === 'function') loadPlot();
+            if (typeof isComparing !== 'undefined' && isComparing) {
+                if (typeof window.applyCompare === 'function') {
+                    window.applyCompare();
+                }
+            }
+          });
+
+          return wrap;
         }
       });
       map.addControl(new CustomControls());
 
-      // Track cursor over map to show value on colorbar
-      map.on('mousemove', function(e) {
-        if (!lastPayload) return;
+      map.on('move', () => {
+        if (isComparing) {
+           const sliderWrap = document.getElementById('compare-slider-wrap');
+           if (sliderWrap) updateCompareClip(parseFloat(sliderWrap.style.left) || (window.innerWidth / 2));
+        }
+      });
+      map.on('zoom', () => {
+        if (isComparing) {
+           const sliderWrap = document.getElementById('compare-slider-wrap');
+           if (sliderWrap) updateCompareClip(parseFloat(sliderWrap.style.left) || (window.innerWidth / 2));
+        }
+      });
+
+      // Track cursor click for Point Info
+      map.on('click', function(e) {
+        if (!isGetPointInfoActive || !lastPayload) return;
+        
+        const ptLat = e.latlng.lat;
+        const ptLon = e.latlng.lng;
         const lat = lastPayload.lat;
         const lon = lastPayload.lon;
         const z = lastPayload.z;
-        const ptLat = e.latlng.lat;
-        const ptLon = e.latlng.lng;
 
-        if (ptLat < lat[0] || ptLat > lat[lat.length-1] || ptLon < lon[0] || ptLon > lon[lon.length-1]) {
-           document.getElementById('colorbar-cursor-line').style.display = 'none';
-           return;
+        if (ptLat < lat[0] || ptLat > lat[lat.length - 1] || ptLon < lon[0] || ptLon > lon[lon.length - 1]) {
+            return;
         }
 
         let latIdx = 0;
         let minLatDiff = Infinity;
         for (let i = 0; i < lat.length; i++) {
-           const diff = Math.abs(lat[i] - ptLat);
-           if (diff < minLatDiff) { minLatDiff = diff; latIdx = i; }
+          const diff = Math.abs(lat[i] - ptLat);
+          if (diff < minLatDiff) { minLatDiff = diff; latIdx = i; }
         }
-        
+
         let lonIdx = 0;
         let minLonDiff = Infinity;
         for (let i = 0; i < lon.length; i++) {
-           const diff = Math.abs(lon[i] - ptLon);
-           if (diff < minLonDiff) { minLonDiff = diff; lonIdx = i; }
+          const diff = Math.abs(lon[i] - ptLon);
+          if (diff < minLonDiff) { minLonDiff = diff; lonIdx = i; }
+        }
+
+        const val = (z[latIdx] && z[latIdx][lonIdx] !== undefined) ? z[latIdx][lonIdx] : null;
+
+        if (val !== null && val !== undefined && !isNaN(val)) {
+            if (pointInfoMarker) map.removeLayer(pointInfoMarker);
+            
+            const srcUnit = document.querySelector('.unit-lbl');
+            const unitTxt = srcUnit ? srcUnit.innerText.replace('Units: ', '').trim() : '';
+            const jenisSel = document.getElementById('sel-jenis');
+            let quantityStr = "Klimatologi";
+            if (jenisSel && jenisSel.value) {
+                quantityStr = jenisSel.value.charAt(0).toUpperCase() + jenisSel.value.slice(1).toLowerCase();
+            }
+            
+            const popupContent = `
+                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-width: 150px;">
+                    <div style="font-weight: 600; color: #1e3a8a; border-bottom: 1px solid #bfdbfe; padding-bottom: 4px; margin-bottom: 6px;">Point Info</div>
+                    <div style="font-size: 12px; margin-bottom: 4px;"><b>Lat:</b> ${ptLat.toFixed(3)}°</div>
+                    <div style="font-size: 12px; margin-bottom: 4px;"><b>Lon:</b> ${ptLon.toFixed(3)}°</div>
+                    <div style="font-size: 12px; margin-bottom: 4px;"><b>Quantity:</b> ${quantityStr}</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #b91c1c; margin-top: 6px;"><b>Value:</b> ${val.toFixed(2)} <span style="font-size: 10px; font-weight: normal; color: #666;">${unitTxt}</span></div>
+                </div>
+            `;
+            pointInfoMarker = L.popup({closeButton: true, autoClose: false, closeOnClick: false})
+                .setLatLng(e.latlng)
+                .setContent(popupContent)
+                .openOn(map);
+        }
+      });
+
+      // Track cursor over map to show value on colorbar
+      map.on('mousemove', function (e) {
+        let sourceData = lastPayload;
+
+        if (typeof isComparing !== 'undefined' && isComparing && window.lastCompareData) {
+            const sliderWrap = document.getElementById('compare-slider-wrap');
+            if (sliderWrap && sliderWrap.style.display !== 'none') {
+                const sliderLeft = parseFloat(sliderWrap.style.left);
+                if (e.originalEvent.clientX > sliderLeft) {
+                    sourceData = window.lastCompareData;
+                }
+            }
+        }
+
+        if (!sourceData) return;
+        const lat = sourceData.lat;
+        const lon = sourceData.lon;
+        const z = sourceData.z;
+        const ptLat = e.latlng.lat;
+        const ptLon = e.latlng.lng;
+
+        if (ptLat < lat[0] || ptLat > lat[lat.length - 1] || ptLon < lon[0] || ptLon > lon[lon.length - 1]) {
+          document.getElementById('colorbar-cursor-line').style.display = 'none';
+          return;
+        }
+
+        let latIdx = 0;
+        let minLatDiff = Infinity;
+        for (let i = 0; i < lat.length; i++) {
+          const diff = Math.abs(lat[i] - ptLat);
+          if (diff < minLatDiff) { minLatDiff = diff; latIdx = i; }
+        }
+
+        let lonIdx = 0;
+        let minLonDiff = Infinity;
+        for (let i = 0; i < lon.length; i++) {
+          const diff = Math.abs(lon[i] - ptLon);
+          if (diff < minLonDiff) { minLonDiff = diff; lonIdx = i; }
         }
 
         const val = (z[latIdx] && z[latIdx][lonIdx] !== undefined) ? z[latIdx][lonIdx] : null;
 
         if (val === null || val === undefined) {
-           document.getElementById('colorbar-cursor-line').style.display = 'none';
+          document.getElementById('colorbar-cursor-line').style.display = 'none';
         } else {
-           const line = document.getElementById('colorbar-cursor-line');
-           line.style.display = 'block';
-           
-           const zmin = parseFloat(document.getElementById('in-min').value);
-           const zmax = parseFloat(document.getElementById('in-max').value);
-           
-           let t = (val - zmin) / (zmax - zmin);
-           t = Math.max(0, Math.min(1, t)); 
-           line.style.left = (t * 100) + '%';
+          const line = document.getElementById('colorbar-cursor-line');
+          line.style.display = 'block';
+
+          const zmin = parseFloat(document.getElementById('in-min').value);
+          const zmax = parseFloat(document.getElementById('in-max').value);
+
+          let t = (val - zmin) / (zmax - zmin);
+          t = Math.max(0, Math.min(1, t));
+          line.style.left = (t * 100) + '%';
         }
       });
-      
-      map.on('mouseout', function() {
-         const line = document.getElementById('colorbar-cursor-line');
-         if(line) line.style.display = 'none';
+
+      map.on('mouseout', function () {
+        const line = document.getElementById('colorbar-cursor-line');
+        if (line) line.style.display = 'none';
       });
     }
 
@@ -833,12 +1293,12 @@
       return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
     }
 
-    function colormap(paletteName, t, isDiscrete, numBins=8) {
+    function colormap(paletteName, t, isDiscrete, numBins = 8) {
       const stops = PALETTES[paletteName] || PALETTES.rdbu;
       t = Math.max(0, Math.min(1, t));
       if (isDiscrete) {
-         const binIdx = Math.min(numBins - 1, Math.floor(t * numBins));
-         t = binIdx / Math.max(1, numBins - 1);
+        const binIdx = Math.min(numBins - 1, Math.floor(t * numBins));
+        t = binIdx / Math.max(1, numBins - 1);
       }
       const n = stops.length - 1;
       const pos = t * n;
@@ -853,22 +1313,22 @@
       ];
     }
 
-    function paletteGradientCss(paletteName, isDiscrete, numBins=8) {
+    function paletteGradientCss(paletteName, isDiscrete, numBins = 8) {
       const stops = PALETTES[paletteName] || PALETTES.rdbu;
       if (!isDiscrete) return `linear-gradient(to right, ${stops.join(',')})`;
       let css = 'linear-gradient(to right, ';
       const step = 100 / numBins;
       for (let i = 0; i < numBins; i++) {
-         const t = i / Math.max(1, numBins - 1);
-         const n = stops.length - 1;
-         const pos = t * n;
-         const idx = Math.min(n - 1, Math.floor(pos));
-         const frac = pos - idx;
-         const c0 = hexToRgb(stops[idx]);
-         const c1 = hexToRgb(stops[idx + 1]);
-         const rgb = `rgb(${Math.round(c0[0] + (c1[0] - c0[0]) * frac)},${Math.round(c0[1] + (c1[1] - c0[1]) * frac)},${Math.round(c0[2] + (c1[2] - c0[2]) * frac)})`;
-         css += `${rgb} ${i*step}%, ${rgb} ${(i+1)*step}%`;
-         if (i < numBins - 1) css += ', ';
+        const t = i / Math.max(1, numBins - 1);
+        const n = stops.length - 1;
+        const pos = t * n;
+        const idx = Math.min(n - 1, Math.floor(pos));
+        const frac = pos - idx;
+        const c0 = hexToRgb(stops[idx]);
+        const c1 = hexToRgb(stops[idx + 1]);
+        const rgb = `rgb(${Math.round(c0[0] + (c1[0] - c0[0]) * frac)},${Math.round(c0[1] + (c1[1] - c0[1]) * frac)},${Math.round(c0[2] + (c1[2] - c0[2]) * frac)})`;
+        css += `${rgb} ${i * step}%, ${rgb} ${(i + 1) * step}%`;
+        if (i < numBins - 1) css += ', ';
       }
       css += ')';
       return css;
@@ -924,7 +1384,7 @@
     function activeSkenario() {
       const selSk = document.getElementById('sel-skenario');
       if (selSk && selSk.value) return selSk.value;
-      
+
       const kategori = document.getElementById('sel-kategori').value;
       const variabel = document.getElementById('sel-variabel').value;
       const { historicalKeys, futureKeys } = currentSkenarioGroup();
@@ -953,12 +1413,12 @@
       const periodeKeys = Object.keys((((OPTIONS[kategori] || {})[variabel]) || {})[skenario] || {});
 
       const track = document.getElementById('timeline-track');
-      track.innerHTML = '<div class="line"><div class="line-fill" id="track-fill"></div></div>';
+      track.innerHTML = '<div class="line" id="track-base"><div class="line-past" id="track-past"></div><div class="line-fill" id="track-fill"></div></div>';
 
       let pointsData = [];
       const histSkenario = historicalKeys[0] || 'historical';
       const histPeriods = Object.keys((((OPTIONS[kategori] || {})[variabel]) || {})[histSkenario] || {});
-      
+
       const anyFutureSkenario = futureKeys[0];
       const futurePeriodeKeys = Object.keys((((OPTIONS[kategori] || {})[variabel]) || {})[anyFutureSkenario] || {});
 
@@ -974,10 +1434,15 @@
       });
 
       // 2. Future periods
-      ['2021_2050', '2071_2100'].forEach(p => {
-        if (futurePeriodeKeys.includes(p)) {
-          pointsData.push({ type: 'future', id: p, label: p.replace('_', '-'), position: 'bottom' });
-        }
+      let baseFuturePeriods = Array.from(new Set(futurePeriodeKeys.map(k => k.substring(0, 9))));
+      baseFuturePeriods.sort((a, b) => {
+        if (a === '2021_2100') return -1;
+        if (b === '2021_2100') return 1;
+        return a.localeCompare(b);
+      });
+      
+      baseFuturePeriods.forEach(p => {
+        pointsData.push({ type: 'future', id: p, label: p.replace('_', '-'), position: 'bottom' });
       });
 
       // 3. Quick Scenario Buttons
@@ -989,15 +1454,15 @@
       };
       const sspOrder = ['ssp126', 'ssp245', 'ssp370', 'ssp585'];
       sspOrder.forEach((sk, idx) => {
-         if (futureKeys.includes(sk)) {
-            pointsData.push({ 
-              type: 'quick_skenario', 
-              id: sk, 
-              label: scenarioMap[sk], 
-              position: (idx % 2 === 0 ? 'top' : 'bottom'),
-              isActiveScenario: (scenarioWrap.dataset.active === 'future' && sk === skenario)
-            });
-         }
+        if (futureKeys.includes(sk)) {
+          pointsData.push({
+            type: 'quick_skenario',
+            id: sk,
+            label: scenarioMap[sk],
+            position: (idx % 2 === 0 ? 'top' : 'bottom'),
+            isActiveScenario: (scenarioWrap.dataset.active === 'future' && sk === skenario)
+          });
+        }
       });
 
       pointsData.forEach((pd) => {
@@ -1005,10 +1470,10 @@
         pt.className = 'tl-point';
         pt.dataset.type = pd.type;
         pt.dataset.id = pd.id;
-        
+
         const lblClass = 'lbl-bottom';
         pt.innerHTML = `<div class="dot"></div><div class="lbl ${lblClass}">${pd.label}</div>`;
-        
+
         if (pd.isActiveScenario) {
           pt.querySelector('.dot').style.borderColor = '#901a1e';
           pt.querySelector('.lbl').style.color = '#901a1e';
@@ -1051,114 +1516,191 @@
     }
 
     let activeRef = '1981_2010';
-    let activeProj = '2021_2050';
+    let activeProj = '2021_2100';
     let activeHist = '1981_2010';
 
     function getCombinedPeriode() {
-      const projMap = { '2021_2050': '2150', '2071_2100': '7100' };
-      const refMap = { '1981_2010': '8110', '1991_2020': '9120' };
-      return (projMap[activeProj] || activeProj) + '_' + (refMap[activeRef] || activeRef);
+      return activeProj + '_' + activeRef;
     }
 
 
     function updateActivePointsUI() {
       const points = Array.from(document.querySelectorAll('.tl-point'));
       const isFuture = (document.getElementById('scenario-wrap').dataset.active === 'future');
-      
+      const currentSkenario = document.getElementById('sel-skenario') ? document.getElementById('sel-skenario').value : '';
+
       let activeIdx = 0;
+      let startIdx = -1;
       points.forEach((el, idx) => {
         let isActive = false;
+        let isHistRef = false;
+        let isTempNode = false;
+        
         if (isFuture) {
-           isActive = (el.dataset.id === activeRef && el.dataset.type === 'hist') || 
-                      (el.dataset.id === activeProj && el.dataset.type === 'future');
+          if (el.dataset.id === activeRef && el.dataset.type === 'hist') {
+            isActive = true;
+            isHistRef = true;
+            startIdx = idx;
+          }
+          if (el.dataset.id === activeProj && el.dataset.type === 'future') {
+            isActive = true;
+            if (startIdx === -1) startIdx = idx;
+            if (activeIdx < idx) activeIdx = idx;
+          }
+          if (el.dataset.type === 'quick_skenario' && el.dataset.id === currentSkenario) {
+            isActive = true;
+            isTempNode = true;
+            if (activeIdx < idx) activeIdx = idx;
+          }
         } else {
-           isActive = (el.dataset.id === activeHist && el.dataset.type === 'hist');
+          if (el.dataset.id === activeHist && el.dataset.type === 'hist') {
+            isActive = true;
+            isHistRef = true;
+            startIdx = idx;
+            activeIdx = idx;
+          }
         }
+        
+        // Custom styling for historical reference vs future target vs temp node
         el.classList.toggle('active', isActive);
-        if (isActive && (el.dataset.type === 'future' || (!isFuture && el.dataset.type === 'hist'))) {
-           activeIdx = idx;
+        if (isActive) {
+          if (isHistRef) {
+            el.querySelector('.dot').style.background = '#1e40af';
+            el.querySelector('.dot').style.borderColor = '#1e40af';
+            el.querySelector('.lbl').style.color = '#1e40af';
+          } else if (isTempNode) {
+            el.querySelector('.dot').style.background = '#901a1e';
+            el.querySelector('.dot').style.borderColor = '#901a1e';
+            el.querySelector('.lbl').style.color = '#901a1e';
+          } else {
+            // Future period node
+            el.querySelector('.dot').style.background = '#fff';
+            el.querySelector('.dot').style.borderColor = '#901a1e';
+            el.querySelector('.lbl').style.color = '#901a1e';
+          }
+        } else {
+          el.querySelector('.dot').style.background = '#fff';
+          el.querySelector('.dot').style.borderColor = '#94a3b8';
+          el.querySelector('.lbl').style.color = '#64748b';
         }
       });
 
       points.forEach((el, idx) => {
-         el.classList.toggle('past-active', idx < activeIdx);
-         el.classList.toggle('future-active', idx > activeIdx);
+        el.classList.toggle('past-active', idx < activeIdx);
+        el.classList.toggle('future-active', idx > activeIdx);
       });
 
       const fill = document.getElementById('track-fill');
-      if (fill) {
-        if (points.length > 1) {
-          const pct = (activeIdx / (points.length - 1)) * 100;
-          fill.style.width = pct + '%';
-        } else {
-          fill.style.width = '0%';
+      const pastFill = document.getElementById('track-past');
+      
+      if (points.length > 1) {
+        if (startIdx === -1) startIdx = 0;
+        if (activeIdx === -1) activeIdx = 0;
+        
+        const startPct = (startIdx / (points.length - 1)) * 100;
+        const endPct = (activeIdx / (points.length - 1)) * 100;
+        
+        if (pastFill) {
+          pastFill.style.width = startPct + '%';
+        }
+        
+        if (fill) {
+          fill.style.left = startPct + '%';
+          fill.style.width = Math.max(0, endPct - startPct) + '%';
         }
       }
-
+      
       updateJenisModel();
     }
 
     function getActivePeriode() {
       const isFuture = (document.getElementById('scenario-wrap').dataset.active === 'future');
       if (!isFuture) return activeHist;
-      
-      const kategori = document.getElementById('sel-kategori').value;
-      const variabel = document.getElementById('sel-variabel').value;
-      const skenario = activeSkenario();
-      const jenis = document.getElementById('sel-jenis').value;
-      
-      const periodObj = (((OPTIONS[kategori] || {})[variabel] || {})[skenario] || {});
-      const combined = getCombinedPeriode();
-      
-      if (jenis && periodObj[combined] && periodObj[combined][jenis]) {
-         return combined;
+      const selJenis = document.getElementById('sel-jenis');
+      const jenis = selJenis ? selJenis.value : '';
+      if (jenis === 'KLIMATOLOGI' || jenis === 'TREND') {
+        return activeProj;
       }
-      return activeProj;
+      return getCombinedPeriode();
     }
-
+    
     let currentDatasetMap = {};
 
+    let lastJenisError = "";
     function updateJenisModel() {
-      const kategori = document.getElementById('sel-kategori').value;
+      try {
+        lastJenisError = "";
+        const kategori = document.getElementById('sel-kategori').value;
       const variabel = document.getElementById('sel-variabel').value;
       const skenario = activeSkenario();
-      
+
       const periodObj = (((OPTIONS[kategori] || {})[variabel] || {})[skenario] || {});
-      
-      let allJenis = new Set();
+
       const isFuture = (document.getElementById('scenario-wrap').dataset.active === 'future');
       const combined = getCombinedPeriode();
 
-      if (!isFuture && periodObj[activeHist]) {
-         Object.keys(periodObj[activeHist]).forEach(j => allJenis.add(j));
-      }
-      if (isFuture && periodObj[activeProj]) {
-         Object.keys(periodObj[activeProj]).forEach(j => allJenis.add(j));
-      }
-      if (isFuture && periodObj[combined]) {
-         Object.keys(periodObj[combined]).forEach(j => allJenis.add(j));
-      }
+      // Collect aggregasi
+      let allAgg = new Set();
+      if (!isFuture && periodObj[activeHist]) Object.keys(periodObj[activeHist]).forEach(a => allAgg.add(a));
+      if (isFuture && periodObj[activeProj]) Object.keys(periodObj[activeProj]).forEach(a => allAgg.add(a));
+      if (isFuture && periodObj[combined]) Object.keys(periodObj[combined]).forEach(a => allAgg.add(a));
+
+      const currentAgg = document.getElementById('sel-aggregasi').value;
+      const aggKeys = Array.from(allAgg).sort();
+      fillSelect(document.getElementById('sel-aggregasi'), aggKeys, true);
       
+      if (aggKeys.includes(currentAgg)) {
+        document.getElementById('sel-aggregasi').value = currentAgg;
+      } else if (aggKeys.includes('annual')) {
+        document.getElementById('sel-aggregasi').value = 'annual';
+      } else if (aggKeys.length > 0) {
+        document.getElementById('sel-aggregasi').value = aggKeys[0];
+      }
+
+      const activeAgg = document.getElementById('sel-aggregasi').value;
+
+      // Collect jenis
+      let allJenis = new Set();
+      if (!isFuture && periodObj[activeHist] && periodObj[activeHist][activeAgg]) {
+        Object.keys(periodObj[activeHist][activeAgg]).forEach(j => allJenis.add(j));
+      }
+      if (isFuture && periodObj[activeProj] && periodObj[activeProj][activeAgg]) {
+        Object.keys(periodObj[activeProj][activeAgg]).forEach(j => allJenis.add(j));
+      }
+      if (isFuture && periodObj[combined] && periodObj[combined][activeAgg]) {
+        Object.keys(periodObj[combined][activeAgg]).forEach(j => allJenis.add(j));
+      }
+
       const currentJenis = document.getElementById('sel-jenis').value;
       const jenisKeys = Array.from(allJenis).sort();
       fillSelect(document.getElementById('sel-jenis'), jenisKeys, true);
-      
+
       if (jenisKeys.includes(currentJenis)) {
-         document.getElementById('sel-jenis').value = currentJenis;
+        document.getElementById('sel-jenis').value = currentJenis;
+      } else if (jenisKeys.includes('KLIMATOLOGI')) {
+        document.getElementById('sel-jenis').value = 'KLIMATOLOGI';
+      } else if (jenisKeys.length > 0) {
+        document.getElementById('sel-jenis').value = jenisKeys[0];
       }
 
       updateDatasetModel();
+      } catch (e) {
+        lastJenisError = e.message;
+        setStatus(`Error di updateJenisModel: ${e.message}`, true);
+        console.error(e);
+      }
     }
-
+    
     function updateDatasetModel() {
-      const kategori = document.getElementById('sel-kategori').value;
+      try {
+        const kategori = document.getElementById('sel-kategori').value;
       const variabel = document.getElementById('sel-variabel').value;
       const skenario = activeSkenario();
       const periode = getActivePeriode();
+      const aggregasi = document.getElementById('sel-aggregasi').value;
       const jenis = document.getElementById('sel-jenis').value;
-      if (!jenis) return;
 
-      const modelKeys = Object.keys(((((OPTIONS[kategori] || {})[variabel] || {})[skenario] || {})[periode] || {})[jenis] || {});
+      const modelKeys = Object.keys((((((OPTIONS[kategori] || {})[variabel] || {})[skenario] || {})[periode] || {})[aggregasi] || {})[jenis] || {});
 
       currentDatasetMap = {};
       const mapping = (UI_CONFIG && UI_CONFIG.dataset_categories) ? UI_CONFIG.dataset_categories : {};
@@ -1176,17 +1718,38 @@
       });
 
       const availableDatasets = Object.keys(currentDatasetMap).sort();
+      const currentDs = document.getElementById('sel-dataset').value;
       fillSelect(document.getElementById('sel-dataset'), availableDatasets, true);
-      document.getElementById('current-ds-label').textContent = document.getElementById('sel-dataset').value || 'Select dataset';
-
+      
+      if (availableDatasets.includes(currentDs)) {
+        document.getElementById('sel-dataset').value = currentDs;
+      } else if (availableDatasets.includes('Ensemble')) {
+        document.getElementById('sel-dataset').value = 'Ensemble';
+      }
+      
+      const currentDsLabel = document.getElementById('current-ds-label');
+      if (currentDsLabel) {
+         currentDsLabel.textContent = document.getElementById('sel-dataset').value || 'Select dataset';
+      }
 
       updateModelDropdown();
-    }
-
-    function updateModelDropdown() {
+      } catch (e) {
+        setStatus(`Error di updateDatasetModel: ${e.message}`, true);
+        console.error(e);
+      }
+    }    function updateModelDropdown() {
       const ds = document.getElementById('sel-dataset').value;
       const models = currentDatasetMap[ds] || [];
+      const currentModel = document.getElementById('sel-model').value;
       fillSelect(document.getElementById('sel-model'), models, true);
+      
+      if (models.includes(currentModel)) {
+        document.getElementById('sel-model').value = currentModel;
+      } else if (models.includes('ENSEMBLE-NEX')) {
+        document.getElementById('sel-model').value = 'ENSEMBLE-NEX';
+      } else if (models.includes('ENS-MEAN-NEX')) {
+        document.getElementById('sel-model').value = 'ENS-MEAN-NEX';
+      }
     }
 
     /* ---------- Load data & render overlay ---------- */
@@ -1197,272 +1760,272 @@
     let modalActiveTab = 'All';
 
     async function fetchColorScales() {
-       const res = await fetch('/api/color_scales');
-       COLOR_SCALES_DATA = await res.json();
+      const res = await fetch('/api/color_scales');
+      COLOR_SCALES_DATA = await res.json();
     }
 
-    
+
     let dsModalActiveCat = 'All';
     const DS_CAT_MAPPING = {
-        'Climate projections': ['CMIP6', 'Ensemble', 'CORDEX'],
-        'Reanalyses': ['ERA5', 'Reanalysis'],
-        'Observations': ['Observasi', 'Observations']
+      'Climate projections': ['CMIP6', 'Ensemble', 'CORDEX'],
+      'Reanalyses': ['ERA5', 'Reanalysis'],
+      'Observations': ['Observasi', 'Observations']
     };
 
     function openDsModal() {
-       const overlay = document.getElementById('ds-modal-overlay');
-       const content = document.getElementById('ds-modal-content');
-       const btn = document.getElementById('btn-open-ds-modal');
-       
-       overlay.style.display = 'block';
-       
-       const rect = btn.getBoundingClientRect();
-       content.style.position = 'absolute';
-       content.style.top = (rect.bottom + 2) + 'px';
-       content.style.left = rect.left + 'px';
-       
-       renderDsModalSidebar();
-       renderDsModalGrid();
+      const overlay = document.getElementById('ds-modal-overlay');
+      const content = document.getElementById('ds-modal-content');
+      const btn = document.getElementById('btn-open-ds-modal');
+
+      overlay.style.display = 'block';
+
+      const rect = btn.getBoundingClientRect();
+      content.style.position = 'absolute';
+      content.style.top = (rect.bottom + 2) + 'px';
+      content.style.left = rect.left + 'px';
+
+      renderDsModalSidebar();
+      renderDsModalGrid();
     }
-    
+
     function closeDsModal() {
-       document.getElementById('ds-modal-overlay').style.display = 'none';
+      document.getElementById('ds-modal-overlay').style.display = 'none';
     }
 
     function renderDsModalSidebar() {
-       const list = document.getElementById('ds-modal-cat-list');
-       list.innerHTML = '';
-       
-       let types = Object.keys(UI_CONFIG.dataset_types || {});
-       const categories = ['All', ...types];
-       
-       const dsIcons = {
-           'All': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity: 0.8; margin-right: 8px;"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>`,
-           'Climate projections': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8; margin-right: 8px;"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><line x1="16" y1="20" x2="16" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="8" y1="20" x2="8" y2="14"></line></svg>`,
-           'Reanalyses': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8; margin-right: 8px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line><polyline points="6 12 10 8 14 12 18 6"></polyline></svg>`,
-           'Observations': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8; margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="2" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="22" y2="12"></line></svg>`
-       };
-       
-       categories.forEach(cat => {
-          let icon = dsIcons[cat] || `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity: 0.8; margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle></svg>`;
-          
-          const div = document.createElement('div');
-          div.className = 'var-cat-item ' + (dsModalActiveCat === cat ? 'active' : '');
-          div.style.display = 'flex';
-          div.style.alignItems = 'center';
-          div.innerHTML = `${icon} ${cat}`;
-          div.onclick = () => {
-             dsModalActiveCat = cat;
-             renderDsModalSidebar();
-             renderDsModalGrid();
-          };
-          list.appendChild(div);
-       });
+      const list = document.getElementById('ds-modal-cat-list');
+      list.innerHTML = '';
+
+      let types = Object.keys(UI_CONFIG.dataset_types || {});
+      const categories = ['All', ...types];
+
+      const dsIcons = {
+        'All': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity: 0.8; margin-right: 8px;"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>`,
+        'Climate projections': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8; margin-right: 8px;"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><line x1="16" y1="20" x2="16" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="8" y1="20" x2="8" y2="14"></line></svg>`,
+        'Reanalyses': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8; margin-right: 8px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line><polyline points="6 12 10 8 14 12 18 6"></polyline></svg>`,
+        'Observations': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.8; margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="2" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="22" y2="12"></line></svg>`
+      };
+
+      categories.forEach(cat => {
+        let icon = dsIcons[cat] || `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity: 0.8; margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle></svg>`;
+
+        const div = document.createElement('div');
+        div.className = 'var-cat-item ' + (dsModalActiveCat === cat ? 'active' : '');
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.innerHTML = `${icon} ${cat}`;
+        div.onclick = () => {
+          dsModalActiveCat = cat;
+          renderDsModalSidebar();
+          renderDsModalGrid();
+        };
+        list.appendChild(div);
+      });
     }
-    
+
     function renderDsModalGrid() {
-       const grid = document.getElementById('ds-modal-grid');
-       grid.innerHTML = '';
-       
-       const allDatasets = Object.keys(UI_CONFIG.dataset_categories || {});
-       let filteredDs = allDatasets;
-       
-       if (dsModalActiveCat !== 'All') {
-           const allowed = (UI_CONFIG.dataset_types && UI_CONFIG.dataset_types[dsModalActiveCat]) || [];
-           filteredDs = allDatasets.filter(ds => allowed.includes(ds));
-       }
-       
-       const availableDatasets = Object.keys(currentDatasetMap || {});
-       
-       filteredDs.forEach(ds => {
-          const div = document.createElement('div');
-          const isAvailable = availableDatasets.includes(ds);
-          
-          div.className = 'var-grid-cell';
-          div.innerHTML = `<div>${ds}</div>`;
-          div.style.padding = '16px';
-          div.style.border = '1px solid var(--border)';
-          div.style.margin = '-1px 0 0 -1px';
-          div.style.cursor = isAvailable ? 'pointer' : 'not-allowed';
-          div.style.color = isAvailable ? '#1e293b' : '#94a3b8';
-          div.style.background = isAvailable ? '#fff' : '#f8fafc';
-          
-          if (isAvailable) {
-              div.onmouseenter = () => div.style.background = '#f1f5f9';
-              div.onmouseleave = () => div.style.background = '#fff';
-              div.onclick = () => {
-                 document.getElementById('sel-dataset').value = ds;
-                 document.getElementById('sel-dataset').dispatchEvent(new Event('change'));
-                 closeDsModal();
-              };
-          }
-          grid.appendChild(div);
-       });
+      const grid = document.getElementById('ds-modal-grid');
+      grid.innerHTML = '';
+
+      const allDatasets = Object.keys(UI_CONFIG.dataset_categories || {});
+      let filteredDs = allDatasets;
+
+      if (dsModalActiveCat !== 'All') {
+        const allowed = (UI_CONFIG.dataset_types && UI_CONFIG.dataset_types[dsModalActiveCat]) || [];
+        filteredDs = allDatasets.filter(ds => allowed.includes(ds));
+      }
+
+      const availableDatasets = Object.keys(currentDatasetMap || {});
+
+      filteredDs.forEach(ds => {
+        const div = document.createElement('div');
+        const isAvailable = availableDatasets.includes(ds);
+
+        div.className = 'var-grid-cell';
+        div.innerHTML = `<div>${ds}</div>`;
+        div.style.padding = '16px';
+        div.style.border = '1px solid var(--border)';
+        div.style.margin = '-1px 0 0 -1px';
+        div.style.cursor = isAvailable ? 'pointer' : 'not-allowed';
+        div.style.color = isAvailable ? '#1e293b' : '#94a3b8';
+        div.style.background = isAvailable ? '#fff' : '#f8fafc';
+
+        if (isAvailable) {
+          div.onmouseenter = () => div.style.background = '#f1f5f9';
+          div.onmouseleave = () => div.style.background = '#fff';
+          div.onclick = () => {
+            document.getElementById('sel-dataset').value = ds;
+            document.getElementById('sel-dataset').dispatchEvent(new Event('change'));
+            closeDsModal();
+          };
+        }
+        grid.appendChild(div);
+      });
     }
 
 
     function openVarModal() {
-       const btn = document.getElementById('btn-open-var-modal');
-       const overlay = document.getElementById('var-modal-overlay');
-       const content = document.getElementById('var-modal-content');
-       
-       if (btn.classList.contains('open')) {
-           closeVarModal();
-           return;
-       }
-       
-       btn.classList.add('open');
-       overlay.style.display = 'block';
-       
-       const rect = btn.getBoundingClientRect();
-       content.style.position = 'absolute';
-       content.style.top = (rect.bottom + 2) + 'px';
-       content.style.left = rect.left + 'px';
-       
-       renderModalSidebar();
+      const btn = document.getElementById('btn-open-var-modal');
+      const overlay = document.getElementById('var-modal-overlay');
+      const content = document.getElementById('var-modal-content');
+
+      if (btn.classList.contains('open')) {
+        closeVarModal();
+        return;
+      }
+
+      btn.classList.add('open');
+      overlay.style.display = 'block';
+
+      const rect = btn.getBoundingClientRect();
+      content.style.position = 'absolute';
+      content.style.top = (rect.bottom + 2) + 'px';
+      content.style.left = rect.left + 'px';
+
+      renderModalSidebar();
     }
-    
+
     function closeVarModal() {
-       document.getElementById('btn-open-var-modal').classList.remove('open');
-       document.getElementById('var-modal-overlay').style.display = 'none';
+      document.getElementById('btn-open-var-modal').classList.remove('open');
+      document.getElementById('var-modal-overlay').style.display = 'none';
     }
 
     function renderModalSidebar() {
-       const catList = document.getElementById('var-category-list');
-       catList.innerHTML = '';
-       // Add search box
-       const searchDiv = document.createElement('div');
-       searchDiv.style.padding = '0 0 8px 0';
-       searchDiv.innerHTML = `<div style="border: 1px solid #1e3a8a; border-radius: 4px; padding: 6px 10px; display: flex; align-items: center; background: #fff;">
+      const catList = document.getElementById('var-category-list');
+      catList.innerHTML = '';
+      // Add search box
+      const searchDiv = document.createElement('div');
+      searchDiv.style.padding = '0 0 8px 0';
+      searchDiv.innerHTML = `<div style="border: 1px solid #1e3a8a; border-radius: 4px; padding: 6px 10px; display: flex; align-items: center; background: #fff;">
          <input type="text" placeholder="Search..." style="border: none; outline: none; width: 100%; font-size: 0.85rem;" />
          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
        </div>`;
-       catList.appendChild(searchDiv);
-       
-       // Add All button
-       const allCatDiv = document.createElement('div');
-       allCatDiv.className = 'var-cat-item' + (modalActiveCat === 'All' ? ' active' : '');
-       allCatDiv.style.display = 'flex';
-       allCatDiv.style.alignItems = 'center';
-       allCatDiv.innerHTML = `<img src="/static/icons/All.svg" width="18" height="18" style="opacity: 0.8; margin-right: 8px;" onerror="this.style.display='none'" /> All`;
-       allCatDiv.onclick = () => { modalActiveCat = 'All'; modalActiveTab = 'All'; renderModalSidebar(); };
-       catList.appendChild(allCatDiv);
+      catList.appendChild(searchDiv);
 
-       const categories = Object.keys(OPTIONS);
-       if (!modalActiveCat && categories.length > 0) modalActiveCat = categories[0];
-       
-       categories.forEach(cat => {
-          let icon = `<img src="/static/icons/${cat}.svg" width="18" height="18" style="opacity: 0.8; margin-right: 8px;" onerror="this.style.display='none'" />`;
-          
-          const div = document.createElement('div');
-          div.className = 'var-cat-item' + (cat === modalActiveCat ? ' active' : '');
-          div.style.display = 'flex';
-          div.style.alignItems = 'center';
-          div.innerHTML = `${icon} ${cat}`;
-          div.onclick = () => {
-             modalActiveCat = cat;
-             modalActiveTab = 'All';
-             renderModalSidebar();
-          };
-          catList.appendChild(div);
-       });
-       renderModalTabs();
+      // Add All button
+      const allCatDiv = document.createElement('div');
+      allCatDiv.className = 'var-cat-item' + (modalActiveCat === 'All' ? ' active' : '');
+      allCatDiv.style.display = 'flex';
+      allCatDiv.style.alignItems = 'center';
+      allCatDiv.innerHTML = `<img src="/static/icons/All.svg" width="18" height="18" style="opacity: 0.8; margin-right: 8px;" onerror="this.style.display='none'" /> All`;
+      allCatDiv.onclick = () => { modalActiveCat = 'All'; modalActiveTab = 'All'; renderModalSidebar(); };
+      catList.appendChild(allCatDiv);
+
+      const categories = Object.keys(OPTIONS);
+      if (!modalActiveCat && categories.length > 0) modalActiveCat = categories[0];
+
+      categories.forEach(cat => {
+        let icon = `<img src="/static/icons/${cat}.svg" width="18" height="18" style="opacity: 0.8; margin-right: 8px;" onerror="this.style.display='none'" />`;
+
+        const div = document.createElement('div');
+        div.className = 'var-cat-item' + (cat === modalActiveCat ? ' active' : '');
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.innerHTML = `${icon} ${cat}`;
+        div.onclick = () => {
+          modalActiveCat = cat;
+          modalActiveTab = 'All';
+          renderModalSidebar();
+        };
+        catList.appendChild(div);
+      });
+      renderModalTabs();
     }
 
     function renderModalTabs() {
-       const tabContainer = document.getElementById('var-index-tabs');
-       tabContainer.innerHTML = '';
-       if (!modalActiveCat) return;
-       
-       let variables = [];
-       if (modalActiveCat === 'All') {
-          Object.keys(OPTIONS).forEach(cat => variables.push(...Object.keys(OPTIONS[cat])));
-       } else if (OPTIONS[modalActiveCat]) {
-          variables = Object.keys(OPTIONS[modalActiveCat]);
-       }
-       const indexTypes = new Set(['All']);
-       
-       variables.forEach(v => {
-          if (COLOR_SCALES_DATA[v] && COLOR_SCALES_DATA[v].index_type) {
-             indexTypes.add(COLOR_SCALES_DATA[v].index_type);
-          }
-       });
-       
-       const sortedTabs = Array.from(indexTypes);
-       sortedTabs.sort((a, b) => a === 'All' ? -1 : (b === 'All' ? 1 : a.localeCompare(b)));
-       
-       const tabIcons = {
-          'All': `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>`,
-          'Mean': `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>`,
-          'Extreme': `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>`,
-          'Spells and count': `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"></path></svg>`
-       };
-       
-       sortedTabs.forEach(tab => {
-          const div = document.createElement('div');
-          div.className = 'var-tab-item' + (tab === modalActiveTab ? ' active' : '');
-          const icon = tabIcons[tab] || '';
-          div.innerHTML = `${icon} ${tab}`;
-          div.onclick = () => {
-             modalActiveTab = tab;
-             renderModalTabs();
-          };
-          tabContainer.appendChild(div);
-       });
-       
-       renderModalGrid();
+      const tabContainer = document.getElementById('var-index-tabs');
+      tabContainer.innerHTML = '';
+      if (!modalActiveCat) return;
+
+      let variables = [];
+      if (modalActiveCat === 'All') {
+        Object.keys(OPTIONS).forEach(cat => variables.push(...Object.keys(OPTIONS[cat])));
+      } else if (OPTIONS[modalActiveCat]) {
+        variables = Object.keys(OPTIONS[modalActiveCat]);
+      }
+      const indexTypes = new Set(['All']);
+
+      variables.forEach(v => {
+        if (COLOR_SCALES_DATA[v] && COLOR_SCALES_DATA[v].index_type) {
+          indexTypes.add(COLOR_SCALES_DATA[v].index_type);
+        }
+      });
+
+      const sortedTabs = Array.from(indexTypes);
+      sortedTabs.sort((a, b) => a === 'All' ? -1 : (b === 'All' ? 1 : a.localeCompare(b)));
+
+      const tabIcons = {
+        'All': `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>`,
+        'Mean': `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>`,
+        'Extreme': `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>`,
+        'Spells and count': `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"></path></svg>`
+      };
+
+      sortedTabs.forEach(tab => {
+        const div = document.createElement('div');
+        div.className = 'var-tab-item' + (tab === modalActiveTab ? ' active' : '');
+        const icon = tabIcons[tab] || '';
+        div.innerHTML = `${icon} ${tab}`;
+        div.onclick = () => {
+          modalActiveTab = tab;
+          renderModalTabs();
+        };
+        tabContainer.appendChild(div);
+      });
+
+      renderModalGrid();
     }
 
     function renderModalGrid() {
-       const grid = document.getElementById('var-grid');
-       grid.innerHTML = '';
-       if (!modalActiveCat) return;
-       
-       let variables = [];
-       if (modalActiveCat === 'All') {
-          Object.keys(OPTIONS).forEach(cat => variables.push(...Object.keys(OPTIONS[cat])));
-       } else if (OPTIONS[modalActiveCat]) {
-          variables = Object.keys(OPTIONS[modalActiveCat]);
-       }
-       
-       const currentSelectedVar = document.getElementById('sel-variabel').value;
-       
-       variables.forEach(v => {
-          const vData = COLOR_SCALES_DATA[v] || {};
-          const vType = vData.index_type || 'Mean';
-          const vName = vData.name || v;
-          
-          if (modalActiveTab !== 'All' && vType !== modalActiveTab) return;
-          
-          const card = document.createElement('div');
-          card.className = 'var-card' + (currentSelectedVar === v ? ' active' : '');
-          card.textContent = vName;
-          
-          card.onclick = () => {
-             let catFound = modalActiveCat;
-             if (modalActiveCat === 'All') {
-                for (const [c, vars] of Object.entries(OPTIONS)) {
-                   if (Object.keys(vars).includes(v)) { catFound = c; break; }
-                }
-             }
-             document.getElementById('sel-kategori').value = catFound;
-             fillSelect(document.getElementById('sel-variabel'), Object.keys(OPTIONS[catFound]), false);
-             document.getElementById('sel-variabel').value = v;
-             updateCurrentVarLabel();
-             renderTimeline(); // re-render timeline if necessary
-             updateDatasetModel();
-             loadPlot();
-             closeVarModal();
-          };
-          grid.appendChild(card);
-       });
+      const grid = document.getElementById('var-grid');
+      grid.innerHTML = '';
+      if (!modalActiveCat) return;
+
+      let variables = [];
+      if (modalActiveCat === 'All') {
+        Object.keys(OPTIONS).forEach(cat => variables.push(...Object.keys(OPTIONS[cat])));
+      } else if (OPTIONS[modalActiveCat]) {
+        variables = Object.keys(OPTIONS[modalActiveCat]);
+      }
+
+      const currentSelectedVar = document.getElementById('sel-variabel').value;
+
+      variables.forEach(v => {
+        const vData = COLOR_SCALES_DATA[v] || {};
+        const vType = vData.index_type || 'Mean';
+        const vName = vData.name || v;
+
+        if (modalActiveTab !== 'All' && vType !== modalActiveTab) return;
+
+        const card = document.createElement('div');
+        card.className = 'var-card' + (currentSelectedVar === v ? ' active' : '');
+        card.textContent = vName;
+
+        card.onclick = () => {
+          let catFound = modalActiveCat;
+          if (modalActiveCat === 'All') {
+            for (const [c, vars] of Object.entries(OPTIONS)) {
+              if (Object.keys(vars).includes(v)) { catFound = c; break; }
+            }
+          }
+          document.getElementById('sel-kategori').value = catFound;
+          fillSelect(document.getElementById('sel-variabel'), Object.keys(OPTIONS[catFound]), false);
+          document.getElementById('sel-variabel').value = v;
+          updateCurrentVarLabel();
+          renderTimeline(); // re-render timeline if necessary
+          updateDatasetModel();
+          loadPlot();
+          closeVarModal();
+        };
+        grid.appendChild(card);
+      });
     }
 
     function updateCurrentVarLabel() {
-       const v = document.getElementById('sel-variabel').value;
-       const vName = (COLOR_SCALES_DATA[v] && COLOR_SCALES_DATA[v].name) ? COLOR_SCALES_DATA[v].name : v;
-       const btnLabel = document.getElementById('current-var-label');
-       if (btnLabel) btnLabel.textContent = vName || 'Select variable...';
+      const v = document.getElementById('sel-variabel').value;
+      const vName = (COLOR_SCALES_DATA[v] && COLOR_SCALES_DATA[v].name) ? COLOR_SCALES_DATA[v].name : v;
+      const btnLabel = document.getElementById('current-var-label');
+      if (btnLabel) btnLabel.textContent = vName || 'Select variable...';
     }
 
 
@@ -1480,39 +2043,52 @@
         setStatus('Tidak ada data ditemukan. Periksa DATA_ROOTS di server.', true);
         return;
       }
-      
+
       let defaultCat = kategoriKeys[0];
       const targetVar = 'TMM';
       for (const cat of kategoriKeys) {
-         if (OPTIONS[cat] && OPTIONS[cat][targetVar]) {
-            defaultCat = cat;
-            break;
-         }
+        if (OPTIONS[cat] && OPTIONS[cat][targetVar]) {
+          defaultCat = cat;
+          break;
+        }
       }
-      
+
       fillSelect(document.getElementById('sel-kategori'), kategoriKeys, false);
       document.getElementById('sel-kategori').value = defaultCat;
-      
+
       const variabelKeys = Object.keys(OPTIONS[defaultCat] || {});
       fillSelect(document.getElementById('sel-variabel'), variabelKeys, false);
       if (variabelKeys.includes(targetVar)) {
-         document.getElementById('sel-variabel').value = targetVar;
+        document.getElementById('sel-variabel').value = targetVar;
       }
-      
+
       if (typeof updateDatasetModel === 'function') {
-         updateDatasetModel();
-         const dsOpts = Array.from(document.getElementById('sel-dataset').options).map(o => o.value);
-         if (dsOpts.includes("Ensemble")) {
-             document.getElementById('sel-dataset').value = "Ensemble";
-             document.getElementById('current-ds-label').textContent = "Ensemble";
-             if (typeof updateModelDropdown === 'function') updateModelDropdown();
-             const modOpts = Array.from(document.getElementById('sel-model').options).map(o => o.value);
-             if (modOpts.includes("ENS-MEAN-NEX")) {
-                 document.getElementById('sel-model').value = "ENS-MEAN-NEX";
-             }
-         }
+        // Coba setel aggregasi default
+        const selAgg = document.getElementById('sel-aggregasi');
+        if (selAgg && Array.from(selAgg.options).map(o => o.value).includes('annual')) {
+           selAgg.value = 'annual';
+        }
+        // Coba setel jenis default
+        const selJenis = document.getElementById('sel-jenis');
+        if (selJenis && Array.from(selJenis.options).map(o => o.value).includes('KLIMATOLOGI')) {
+           selJenis.value = 'KLIMATOLOGI';
+        }
+
+        updateDatasetModel();
+        const dsOpts = Array.from(document.getElementById('sel-dataset').options).map(o => o.value);
+        if (dsOpts.includes("Ensemble")) {
+          document.getElementById('sel-dataset').value = "Ensemble";
+          document.getElementById('current-ds-label').textContent = "Ensemble";
+          if (typeof updateModelDropdown === 'function') updateModelDropdown();
+          const modOpts = Array.from(document.getElementById('sel-model').options).map(o => o.value);
+          if (modOpts.includes("ENS-MEAN-NEX")) {
+            document.getElementById('sel-model').value = "ENS-MEAN-NEX";
+          } else if (modOpts.includes("ENSEMBLE-NEX")) {
+            document.getElementById('sel-model').value = "ENSEMBLE-NEX";
+          }
+        }
       }
-      
+
       if (typeof updateCurrentVarLabel === 'function') updateCurrentVarLabel();
       if (typeof modalActiveCat !== 'undefined') modalActiveCat = defaultCat;
 
@@ -1531,9 +2107,10 @@
       const model = document.getElementById('sel-model').value;
 
       if (!kategori || !variabel || !skenario || !periode || !jenis || !model) return;
-
       setStatus('Memuat data...');
-      const params = new URLSearchParams({ kategori, variabel, skenario, periode, jenis, model });
+      const maskIndo = window.isMaskIndo ? '1' : '0';
+      const aggregasi = document.getElementById('sel-aggregasi').value;
+      const params = new URLSearchParams({ kategori, variabel, skenario, periode, aggregasi, jenis, model, mask_indo: maskIndo });
       const res = await fetch('/api/data?' + params.toString());
       const payload = await res.json();
 
@@ -1543,30 +2120,56 @@
       }
       setStatus('');
 
+      const avgValEl = document.getElementById('indonesia-average-val');
+      const avgLoadingEl = document.getElementById('indonesia-average-loading');
+      if (avgValEl && avgLoadingEl) {
+          avgValEl.style.display = 'none';
+          avgLoadingEl.style.display = 'block';
+          fetch('/api/indonesia_average?' + params.toString())
+              .then(r => r.json())
+              .then(d => {
+                  if (d.average !== undefined) {
+                      const unit = payload.unit || document.getElementById('lbl-unit').textContent || '';
+                      const text = d.average.toFixed(2) + ' ' + unit;
+                      avgValEl.textContent = text;
+                      avgValEl.setAttribute('data-orig', text);
+                  } else {
+                      avgValEl.textContent = 'Gagal';
+                  }
+              })
+              .catch(e => {
+                  avgValEl.textContent = 'Error';
+              })
+              .finally(() => {
+                  avgValEl.style.display = 'block';
+                  avgLoadingEl.style.display = 'none';
+              });
+      }
+
       document.getElementById('topbar-title').textContent = payload.var_label || variabel;
-      
+
       const skenarioLabel = getLabel('scenario', skenario);
       const varName = payload.var_label || variabel;
-      
+
       const titleJenis = jenis.charAt(0).toUpperCase() + jenis.slice(1).toLowerCase();
-      
+
       let titleStr = '';
       if (document.getElementById('scenario-wrap').dataset.active === 'historical') {
-         titleStr = `${titleJenis} of ${varName} - Historical (${activeHist.replace('_', '-')})`;
+        titleStr = `${titleJenis} of ${varName} - Historical (${activeHist.replace('_', '-')})`;
       } else {
-         if (periode === getCombinedPeriode()) {
-            titleStr = `${titleJenis} of ${varName} - ${skenarioLabel} (${activeProj.replace('_', '-')}) relative to ${activeRef.replace('_', '-')}`;
-         } else {
-            titleStr = `${titleJenis} of ${varName} - ${skenarioLabel} (${activeProj.replace('_', '-')})`;
-         }
+        if (periode === getCombinedPeriode()) {
+          titleStr = `${titleJenis} of ${varName} - ${skenarioLabel} (${activeProj.replace('_', '-')}) relative to ${activeRef.replace('_', '-')}`;
+        } else {
+          titleStr = `${titleJenis} of ${varName} - ${skenarioLabel} (${activeProj.replace('_', '-')})`;
+        }
       }
       document.getElementById('timeline-title').textContent = titleStr;
 
       let displayPeriode = (document.getElementById('scenario-wrap').dataset.active === 'historical') ? activeHist : activeProj;
       if (document.getElementById('scenario-wrap').dataset.active === 'future' && periode === getCombinedPeriode()) {
-         displayPeriode = `${activeProj.replace('_','-')} (Ref: ${activeRef.replace('_','-')})`;
+        displayPeriode = `${activeProj.replace('_', '-')} (Ref: ${activeRef.replace('_', '-')})`;
       } else {
-         displayPeriode = displayPeriode.replace('_', '-');
+        displayPeriode = displayPeriode.replace('_', '-');
       }
 
       document.getElementById('topbar-meta').innerHTML =
@@ -1604,7 +2207,7 @@
 
       // Selalu update UI popup agar sinkron dengan currentPalette
       document.querySelectorAll('.palette-option').forEach(el => {
-         el.style.border = (el.dataset.cs === currentPalette) ? '1px solid var(--accent)' : '1px solid transparent';
+        el.style.border = (el.dataset.cs === currentPalette) ? '1px solid var(--accent)' : '1px solid transparent';
       });
 
       let zmin, zmax;
@@ -1628,7 +2231,7 @@
         document.getElementById('in-min').value = zmin.toFixed(2);
         document.getElementById('in-max').value = zmax.toFixed(2);
       }
-      
+
       if (autoRange) {
         sliderTrackMin = zmin;
         sliderTrackMax = zmax;
@@ -1637,15 +2240,15 @@
       // Update dynamic ticks
       const ticksDiv = document.getElementById('colorbar-ticks');
       if (ticksDiv) {
-         ticksDiv.innerHTML = '';
-         const diff = Math.abs(zmax - zmin);
-         const count = diff > 0 ? Math.min(10, Math.ceil(diff)) : 10;
-         const step = (zmax - zmin) / count;
-         ticksDiv.innerHTML += `<span>< ${Math.floor(zmin)}</span>`;
-         for (let i = 1; i < count; i++) {
-            ticksDiv.innerHTML += `<span>${Math.round(zmin + i * step)}</span>`;
-         }
-         ticksDiv.innerHTML += `<span>> ${Math.ceil(zmax)}</span>`;
+        ticksDiv.innerHTML = '';
+        const diff = Math.abs(zmax - zmin);
+        const count = diff > 0 ? Math.min(10, Math.ceil(diff)) : 10;
+        const step = (zmax - zmin) / count;
+        ticksDiv.innerHTML += `<span>< ${Math.floor(zmin)}</span>`;
+        for (let i = 1; i < count; i++) {
+          ticksDiv.innerHTML += `<span>${Math.round(zmin + i * step)}</span>`;
+        }
+        ticksDiv.innerHTML += `<span>> ${Math.ceil(zmax)}</span>`;
       }
 
       const nLat = lat.length, nLon = lon.length;
@@ -1657,7 +2260,7 @@
 
       const isDiscrete = document.getElementById('chk-discrete') && document.getElementById('chk-discrete').checked;
       const numBins = document.getElementById('in-bins') ? parseInt(document.getElementById('in-bins').value) || 8 : 8;
-      
+
       // Update colorbar strip based on discrete mode
       document.getElementById('colorbar-strip').style.background = paletteGradientCss(currentPalette, isDiscrete, numBins);
 
@@ -1694,6 +2297,12 @@
       const opacity = parseFloat(document.getElementById('in-opacity').value) || 0.8;
       currentOverlay = L.imageOverlay(imageUrl, bounds, { opacity: opacity, className: window.isPixelated ? 'pixelated-layer' : '' }).addTo(map);
       map.fitBounds(bounds);
+
+      if (typeof isComparing !== 'undefined' && isComparing && window.lastCompareData) {
+        if (typeof window.drawCompareOverlay === 'function') {
+          window.drawCompareOverlay(window.lastCompareData);
+        }
+      }
     }
 
     document.getElementById('sel-kategori').addEventListener('change', () => {
@@ -1737,38 +2346,40 @@
     // Initialize Palette Popup
     const plist = document.getElementById('palette-list');
     Object.keys(PALETTES).forEach(pname => {
-       const div = document.createElement('div');
-       div.className = 'palette-option' + (pname === currentPalette ? ' active' : '');
-       div.dataset.cs = pname;
-       div.style.cursor = 'pointer';
-       div.style.padding = '2px';
-       div.style.borderRadius = '8px';
-       div.style.border = (pname === currentPalette) ? '1px solid var(--accent)' : '1px solid transparent';
-       
-       const grad = document.createElement('div');
-       grad.style.height = '16px';
-       grad.style.borderRadius = '8px';
-       grad.style.background = paletteGradientCss(pname);
-       div.appendChild(grad);
-       
-       div.onclick = (e) => {
-          manualPalette = true;
-          currentPalette = pname;
-          document.querySelectorAll('.palette-option').forEach(el => el.style.border = '1px solid transparent');
-          div.style.border = '1px solid var(--accent)';
-          document.getElementById('palette-popup').style.display = 'none';
-          if (lastPayload) drawOverlay(lastPayload);
-          e.stopPropagation();
-       };
-       plist.appendChild(div);
+      const div = document.createElement('div');
+      div.className = 'palette-option' + (pname === currentPalette ? ' active' : '');
+      div.dataset.cs = pname;
+      div.style.cursor = 'pointer';
+      div.style.padding = '2px';
+      div.style.borderRadius = '8px';
+      div.style.border = (pname === currentPalette) ? '1px solid var(--accent)' : '1px solid transparent';
+
+      const grad = document.createElement('div');
+      grad.style.height = '16px';
+      grad.style.borderRadius = '8px';
+      grad.style.background = paletteGradientCss(pname);
+      div.appendChild(grad);
+
+      div.onclick = (e) => {
+        manualPalette = true;
+        currentPalette = pname;
+        document.querySelectorAll('.palette-option').forEach(el => el.style.border = '1px solid transparent');
+        div.style.border = '1px solid var(--accent)';
+        document.getElementById('palette-popup').style.display = 'none';
+        if (lastPayload) drawOverlay(lastPayload);
+        e.stopPropagation();
+      };
+      plist.appendChild(div);
     });
 
     document.addEventListener('click', () => {
-       document.getElementById('palette-popup').style.display = 'none';
+      document.getElementById('palette-popup').style.display = 'none';
     });
 
     document.getElementById('in-opacity').addEventListener('input', (e) => {
-      if (currentOverlay) currentOverlay.setOpacity(parseFloat(e.target.value));
+      const val = parseFloat(e.target.value);
+      if (currentOverlay) currentOverlay.setOpacity(val);
+      if (typeof compareOverlay !== 'undefined' && compareOverlay) compareOverlay.setOpacity(val);
     });
 
     document.getElementById('in-min').addEventListener('change', () => { autoRange = false; if (lastPayload) drawOverlay(lastPayload); });
@@ -1776,48 +2387,48 @@
 
     // Slider UI Logic
     function updateKnobs() {
-       const zmin = parseFloat(document.getElementById('in-min').value) || sliderTrackMin;
-       const zmax = parseFloat(document.getElementById('in-max').value) || sliderTrackMax;
-       const p1 = Math.max(0, Math.min(100, (zmin - sliderTrackMin) / (sliderTrackMax - sliderTrackMin) * 100));
-       const p2 = Math.max(0, Math.min(100, (zmax - sliderTrackMin) / (sliderTrackMax - sliderTrackMin) * 100));
-       document.getElementById('cb-knob-left').style.left = p1 + '%';
-       document.getElementById('cb-knob-right').style.left = p2 + '%';
-       document.querySelector('.colorbar-bridge').style.clipPath = `polygon(${p1}% 0%, ${p2}% 0%, 100% 100%, 0% 100%)`;
+      const zmin = parseFloat(document.getElementById('in-min').value) || sliderTrackMin;
+      const zmax = parseFloat(document.getElementById('in-max').value) || sliderTrackMax;
+      const p1 = Math.max(0, Math.min(100, (zmin - sliderTrackMin) / (sliderTrackMax - sliderTrackMin) * 100));
+      const p2 = Math.max(0, Math.min(100, (zmax - sliderTrackMin) / (sliderTrackMax - sliderTrackMin) * 100));
+      document.getElementById('cb-knob-left').style.left = p1 + '%';
+      document.getElementById('cb-knob-right').style.left = p2 + '%';
+      document.querySelector('.colorbar-bridge').style.clipPath = `polygon(${p1}% 0%, ${p2}% 0%, 100% 100%, 0% 100%)`;
     }
 
     let activeKnob = null;
     function onSliderMove(e) {
-       if (!activeKnob) return;
-       const trackArea = document.getElementById('cb-knobs').getBoundingClientRect();
-       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-       const dx = clientX - trackArea.left;
-       let p = Math.max(0, Math.min(1, dx / trackArea.width));
-       let val = sliderTrackMin + p * (sliderTrackMax - sliderTrackMin);
-       
-       if (activeKnob.id === 'cb-knob-left') {
-           const v2 = parseFloat(document.getElementById('in-max').value) || sliderTrackMax;
-           if (val > v2) val = v2;
-           document.getElementById('in-min').value = val.toFixed(2);
-       } else {
-           const v1 = parseFloat(document.getElementById('in-min').value) || sliderTrackMin;
-           if (val < v1) val = v1;
-           document.getElementById('in-max').value = val.toFixed(2);
-       }
-       updateKnobs();
+      if (!activeKnob) return;
+      const trackArea = document.getElementById('cb-knobs').getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const dx = clientX - trackArea.left;
+      let p = Math.max(0, Math.min(1, dx / trackArea.width));
+      let val = sliderTrackMin + p * (sliderTrackMax - sliderTrackMin);
+
+      if (activeKnob.id === 'cb-knob-left') {
+        const v2 = parseFloat(document.getElementById('in-max').value) || sliderTrackMax;
+        if (val > v2) val = v2;
+        document.getElementById('in-min').value = val.toFixed(2);
+      } else {
+        const v1 = parseFloat(document.getElementById('in-min').value) || sliderTrackMin;
+        if (val < v1) val = v1;
+        document.getElementById('in-max').value = val.toFixed(2);
+      }
+      updateKnobs();
     }
     function onSliderUp(e) {
-       if (activeKnob) {
-          activeKnob = null;
-          autoRange = false;
-          if (lastPayload) drawOverlay(lastPayload);
-       }
+      if (activeKnob) {
+        activeKnob = null;
+        autoRange = false;
+        if (lastPayload) drawOverlay(lastPayload);
+      }
     }
-    
+
     document.getElementById('cb-knob-left').onmousedown = (e) => { activeKnob = e.target; };
     document.getElementById('cb-knob-right').onmousedown = (e) => { activeKnob = e.target; };
     document.addEventListener('mousemove', onSliderMove);
     document.addEventListener('mouseup', onSliderUp);
-    
+
     document.getElementById('cb-knob-left').ontouchstart = (e) => { activeKnob = e.target; };
     document.getElementById('cb-knob-right').ontouchstart = (e) => { activeKnob = e.target; };
     document.addEventListener('touchmove', onSliderMove);
@@ -1825,75 +2436,763 @@
 
     document.querySelector('.collapse-btn').addEventListener('click', (e) => {
       const sidebar = document.getElementById('sidebar');
-      if (sidebar.style.width === '0px' || sidebar.style.display === 'none') {
-        sidebar.style.width = '320px';
-        sidebar.style.display = 'block';
-        sidebar.style.padding = '20px 24px';
-        e.target.innerHTML = '&laquo;';
-      } else {
-        sidebar.style.width = '0px';
-        sidebar.style.display = 'none';
-        sidebar.style.padding = '0';
-        e.target.innerHTML = '&raquo;';
-      }
+      const mini = document.getElementById('sidebar-mini');
+      sidebar.style.display = 'none';
+      mini.style.display = 'flex';
+      setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+    });
+
+    document.getElementById('btn-expand-sidebar').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      const mini = document.getElementById('sidebar-mini');
+      sidebar.style.display = 'block';
+      mini.style.display = 'none';
       setTimeout(() => { if (map) map.invalidateSize(); }, 300);
     });
 
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
+      // --- Custom Select Logic ---
+      function makeCustomSelect(selectId) {
+        const select = document.getElementById(selectId);
+        if (!select || select.style.display === 'none') return;
+
+        select.style.display = 'none';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'custom-select-wrapper';
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+
+        const trigger = document.createElement('div');
+        trigger.className = 'custom-select-trigger';
+        trigger.innerHTML = `<span class="c-label"></span> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+        wrapper.appendChild(trigger);
+
+        const optionsMenu = document.createElement('div');
+        optionsMenu.className = 'custom-select-options';
+        wrapper.appendChild(optionsMenu);
+
+        const labelEl = trigger.querySelector('.c-label');
+
+        const updateUI = () => {
+          optionsMenu.innerHTML = '';
+          Array.from(select.options).forEach((opt, idx) => {
+            const optDiv = document.createElement('div');
+            optDiv.className = 'custom-select-option' + (opt.selected ? ' selected' : '');
+            optDiv.innerText = opt.text;
+            optDiv.onclick = (e) => {
+              e.stopPropagation();
+              select.selectedIndex = idx;
+              select.dispatchEvent(new Event('change'));
+              wrapper.classList.remove('open');
+              trigger.classList.remove('open');
+              updateUI();
+            };
+            optionsMenu.appendChild(optDiv);
+          });
+          labelEl.innerText = select.selectedIndex >= 0 ? select.options[select.selectedIndex].text : 'Select...';
+        };
+
+        const observer = new MutationObserver(updateUI);
+        observer.observe(select, { childList: true });
+        select.addEventListener('change', updateUI);
+
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isOpen = wrapper.classList.contains('open');
+          document.querySelectorAll('.custom-select-wrapper').forEach(w => {
+            w.classList.remove('open');
+            w.querySelector('.custom-select-trigger').classList.remove('open');
+          });
+          if (!isOpen) {
+            wrapper.classList.add('open');
+            trigger.classList.add('open');
+          }
+        });
+
+        updateUI();
+      }
+
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.custom-select-wrapper').forEach(w => {
+          w.classList.remove('open');
+          w.querySelector('.custom-select-trigger').classList.remove('open');
+        });
+      });
+
+      // Initialize custom selects
+      makeCustomSelect('sel-model');
+      makeCustomSelect('sel-aggregasi');
+      makeCustomSelect('sel-aggregasi');
+      makeCustomSelect('sel-jenis');
+      makeCustomSelect('sel-skenario');
+
+      window.downloadMapAsPNG = async function() {
+        const btnDownload = document.querySelector('[title="Download Map as PNG"]');
+        if (btnDownload) {
+            btnDownload.style.opacity = '0.5';
+            btnDownload.style.pointerEvents = 'none';
+        }
+
+        try {
+          const titleStr = document.getElementById('timeline-title').textContent || 'Climate Projection Map';
+          const metaText = document.getElementById('topbar-meta') ? document.getElementById('topbar-meta').innerText : '';
+          const srcUnit = document.querySelector('.unit-lbl');
+          
+          const stops = PALETTES[currentPalette] || PALETTES.rdbu;
+          const reqBody = {
+             kategori: document.getElementById('sel-kategori').value,
+             variabel: document.getElementById('sel-variabel').value,
+             skenario: activeSkenario(),
+             periode: getActivePeriode(),
+             aggregasi: document.getElementById('sel-aggregasi').value,
+             jenis: document.getElementById('sel-jenis').value,
+             model: document.getElementById('sel-model').value,
+             time_idx: 0,
+             vmin: parseFloat(document.getElementById('in-min').value),
+             vmax: parseFloat(document.getElementById('in-max').value),
+             palette_hex_list: stops,
+             is_discrete: document.getElementById('chk-discrete') ? document.getElementById('chk-discrete').checked : false,
+             num_bins: document.getElementById('in-bins') ? (parseInt(document.getElementById('in-bins').value) || 8) : 8,
+             title: titleStr,
+             subtitle: metaText.replace(/\n/g, ' - '),
+             unit: srcUnit ? srcUnit.innerText : '',
+             mask_indo: window.isMaskIndo ? '1' : '0'
+          };
+          
+          const response = await fetch('/api/export_map', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify(reqBody)
+          });
+          
+          if (!response.ok) {
+              const errData = await response.json();
+              throw new Error(errData.error || 'Gagal melakukan eksport dari server matplotlib');
+          }
+          
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          const cleanName = titleStr.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
+          a.download = `Map_${cleanName}.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+        } catch(err) {
+          console.error('Download failed:', err);
+          alert('Gagal mengunduh peta. Pastikan backend matplotlib menyala: ' + err.message);
+        } finally {
+          if (btnDownload) {
+             btnDownload.style.opacity = '1';
+             btnDownload.style.pointerEvents = 'auto';
+          }
+        }
+      }
+
+      window.downloadMapAsGeoTIFF = async function() {
+        const btnDownload = document.querySelector('[title="Download map as ZIP (NC, TIF, CSV)"]');
+        if (btnDownload) {
+            btnDownload.style.opacity = '0.5';
+            btnDownload.style.pointerEvents = 'none';
+        }
+
+        try {
+          const titleStr = document.getElementById('timeline-title').textContent || 'Climate Projection Map';
+          
+          const reqBody = {
+             kategori: document.getElementById('sel-kategori').value,
+             variabel: document.getElementById('sel-variabel').value,
+             skenario: activeSkenario(),
+             periode: getActivePeriode(),
+             aggregasi: document.getElementById('sel-aggregasi').value,
+             jenis: document.getElementById('sel-jenis').value,
+             model: document.getElementById('sel-model').value,
+             time_idx: 0,
+             mask_indo: window.isMaskIndo ? '1' : '0'
+          };
+          
+          const response = await fetch('/api/export_geotiff', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify(reqBody)
+          });
+          
+          if (!response.ok) {
+              const errData = await response.json();
+              throw new Error(errData.error || 'Gagal mengekspor data dari server');
+          }
+          
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          const cleanName = titleStr.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30);
+          a.download = `Data_${cleanName}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+        } catch(err) {
+          console.error('Download Data failed:', err);
+          alert('Gagal mengunduh Data: ' + err.message);
+        } finally {
+          if (btnDownload) {
+             btnDownload.style.opacity = '1';
+             btnDownload.style.pointerEvents = 'auto';
+          }
+        }
+      }
+
+      window.updateCompareClip = function(clientX) {
+        if (!compareOverlay || !compareOverlay.getElement()) return;
+        const img = compareOverlay.getElement();
+        const rect = img.getBoundingClientRect();
+        
+        const mapRect = document.getElementById('map').getBoundingClientRect();
+        let clampedX = clientX;
+        if (clampedX < mapRect.left) clampedX = mapRect.left;
+        if (clampedX > mapRect.right) clampedX = mapRect.right;
+        
+        const clipX = clampedX - rect.left;
+        img.style.clipPath = `polygon(${clipX}px 0, 100% 0, 100% 100%, ${clipX}px 100%)`;
+        
+        if (typeof currentOverlay !== 'undefined' && currentOverlay && currentOverlay.getElement()) {
+            const currentImg = currentOverlay.getElement();
+            const currentRect = currentImg.getBoundingClientRect();
+            const currentClipX = clampedX - currentRect.left;
+            currentImg.style.clipPath = `polygon(0 0, ${currentClipX}px 0, ${currentClipX}px 100%, 0 100%)`;
+        }
+        
+        const sliderWrap = document.getElementById('compare-slider-wrap');
+        if (sliderWrap) {
+          const header = document.getElementById('map-header');
+          const headerHeight = header ? header.offsetHeight : 0;
+          sliderWrap.style.left = clampedX + 'px';
+          sliderWrap.style.top = (mapRect.top + headerHeight) + 'px';
+          sliderWrap.style.bottom = (window.innerHeight - mapRect.bottom) + 'px';
+        }
+      }
+
+      window.renderComparePills = function(containerId, name, options, selectedValue, onChange) {
+          const container = document.getElementById(containerId);
+          if (!container) return;
+          container.innerHTML = '';
+          container.dataset.value = options.includes(selectedValue) ? selectedValue : (options.length > 0 ? options[0] : '');
+          options.forEach(opt => {
+              const lbl = document.createElement('label');
+              const isSelected = opt === container.dataset.value;
+              lbl.style.cssText = `
+                  display: inline-block;
+                  padding: 4px 10px;
+                  font-size: 0.8rem;
+                  border: 1px solid #cbd5e1;
+                  border-radius: 4px;
+                  cursor: pointer;
+                  user-select: none;
+                  background: ${isSelected ? '#2563eb' : '#f8fafc'};
+                  color: ${isSelected ? 'white' : '#334155'};
+                  text-transform: capitalize;
+              `;
+              const radio = document.createElement('input');
+              radio.type = 'radio';
+              radio.name = name;
+              radio.value = opt;
+              radio.style.display = 'none';
+              if (isSelected) radio.checked = true;
+              
+              radio.addEventListener('change', () => {
+                  container.dataset.value = opt;
+                  Array.from(container.querySelectorAll('label')).forEach(l => {
+                      l.style.background = '#f8fafc';
+                      l.style.color = '#334155';
+                  });
+                  lbl.style.background = '#2563eb';
+                  lbl.style.color = 'white';
+                  if (onChange) onChange(opt);
+              });
+              
+              lbl.appendChild(radio);
+              let text = opt.replace(/_/g, '-');
+              if (name === 'compare-skenario-radio') text = opt.toUpperCase();
+              lbl.appendChild(document.createTextNode(text));
+              container.appendChild(lbl);
+          });
+      };
+
+      window.openCompareModal = function() {
+        const jenis = document.getElementById('sel-jenis').value.toLowerCase();
+        if (jenis !== 'klimatologi' && jenis !== 'trend') {
+            alert('Fitur comparison ini hanya bisa digunakan ketika Quantity berupa Trend atau Klimatologi saja.');
+            return;
+        }
+
+        if (isComparing) {
+            isComparing = false;
+            if (compareOverlay) {
+                map.removeLayer(compareOverlay);
+                compareOverlay = null;
+            }
+            if (typeof currentOverlay !== 'undefined' && currentOverlay && currentOverlay.getElement()) {
+                currentOverlay.getElement().style.clipPath = '';
+            }
+            const sliderWrap = document.getElementById('compare-slider-wrap');
+            if (sliderWrap) sliderWrap.style.display = 'none';
+            const btn = document.querySelector('[title="Compare this variable with other project"]');
+            if (btn) { btn.style.backgroundColor = ''; btn.style.color = ''; }
+            document.getElementById('compareModal').style.display = 'none';
+            
+            const avgValEl = document.getElementById('indonesia-average-val');
+            if (avgValEl && avgValEl.getAttribute('data-orig')) {
+                avgValEl.textContent = avgValEl.getAttribute('data-orig');
+            }
+            
+            return;
+        }
+
+        const modal = document.getElementById('compareModal');
+        const selSkenario = document.getElementById('compare-skenario');
+        const selPeriode = document.getElementById('compare-periode');
+        const selDataset = document.getElementById('compare-dataset');
+        const selModel = document.getElementById('compare-model');
+        
+        selSkenario.innerHTML = '';
+        selPeriode.innerHTML = '';
+        if (selDataset) selDataset.innerHTML = '';
+        selModel.innerHTML = '';
+        
+        const kategori = document.getElementById('sel-kategori').value;
+        const variabel = document.getElementById('sel-variabel').value;
+        
+        const scens = (OPTIONS[kategori] && OPTIONS[kategori][variabel]) ? Object.keys(OPTIONS[kategori][variabel]) : [];
+        
+        let defaultScen = activeSkenario();
+        let defaultPeriode = getActivePeriode();
+        if (defaultScen === 'historical' && scens.includes('ssp245')) {
+            defaultScen = 'ssp245';
+            defaultPeriode = '2021_2100';
+        }
+
+        const updateCompareModels = (selectedDataset, initialModel) => {
+            if (!selectedDataset) return;
+            const targetScen = document.getElementById('compare-skenario').dataset.value || defaultScen;
+            const targetPeriode = document.getElementById('compare-periode').dataset.value || defaultPeriode;
+            const jenis = document.getElementById('sel-jenis').value;
+            
+            let actualPeriode = targetPeriode;
+            if ((jenis === 'CHANGE' || jenis === 'VALUE') && targetScen !== 'historical') {
+                actualPeriode = targetPeriode + '_' + activeRef;
+            }
+            
+            const modelObj = OPTIONS[kategori] && OPTIONS[kategori][variabel] && OPTIONS[kategori][variabel][targetScen] && OPTIONS[kategori][variabel][targetScen][actualPeriode] ? (OPTIONS[kategori][variabel][targetScen][actualPeriode][document.getElementById('sel-aggregasi').value] || {})[jenis] : {};
+            const allModels = Object.keys(modelObj || {});
+
+            const mapping = (UI_CONFIG && UI_CONFIG.dataset_categories) ? UI_CONFIG.dataset_categories : {};
+            const models = allModels.filter(m => {
+                let foundDs = "Uncategorized";
+                for (const [ds, dsModels] of Object.entries(mapping)) {
+                    if (dsModels.includes(m)) { foundDs = ds; break; }
+                }
+                return foundDs === selectedDataset;
+            }).sort();
+            
+            let targetModel = initialModel || document.getElementById('compare-model').dataset.value;
+            if (!models.includes(targetModel)) {
+                targetModel = models.length > 0 ? models[0] : '';
+            }
+            renderComparePills('compare-model', 'compare-model-radio', models, targetModel, () => window.applyCompare());
+        };
+
+        const updateCompareDatasets = (selectedPeriode, initialDataset, initialModel) => {
+            if (!selectedPeriode) return;
+            const targetScen = document.getElementById('compare-skenario').dataset.value || defaultScen;
+            const jenis = document.getElementById('sel-jenis').value;
+            
+            let actualPeriode = selectedPeriode;
+            if ((jenis === 'CHANGE' || jenis === 'VALUE') && targetScen !== 'historical') {
+                actualPeriode = selectedPeriode + '_' + activeRef;
+            }
+            
+            const modelObj = OPTIONS[kategori] && OPTIONS[kategori][variabel] && OPTIONS[kategori][variabel][targetScen] && OPTIONS[kategori][variabel][targetScen][actualPeriode] ? (OPTIONS[kategori][variabel][targetScen][actualPeriode][document.getElementById('sel-aggregasi').value] || {})[jenis] : {};
+            const allModels = Object.keys(modelObj || {});
+
+            const mapping = (UI_CONFIG && UI_CONFIG.dataset_categories) ? UI_CONFIG.dataset_categories : {};
+            const dsSet = new Set();
+            allModels.forEach(m => {
+                let foundDs = "Uncategorized";
+                for (const [ds, dsModels] of Object.entries(mapping)) {
+                    if (dsModels.includes(m)) { foundDs = ds; break; }
+                }
+                dsSet.add(foundDs);
+            });
+            const dsets = Array.from(dsSet).sort();
+            
+            let targetDataset = initialDataset || (document.getElementById('compare-dataset') ? document.getElementById('compare-dataset').dataset.value : null);
+            if (!targetDataset || !dsets.includes(targetDataset)) {
+                targetDataset = dsets.length > 0 ? dsets[0] : '';
+            }
+            
+            renderComparePills('compare-dataset', 'compare-dataset-radio', dsets, targetDataset, (ds) => {
+                updateCompareModels(ds, null);
+                window.applyCompare();
+            });
+            updateCompareModels(targetDataset, initialModel);
+        };
+
+        const updateComparePeriods = (selectedScen, initialPeriode, initialDataset, initialModel) => {
+             if (!selectedScen) return;
+             const scObj = OPTIONS[kategori] && OPTIONS[kategori][variabel] ? OPTIONS[kategori][variabel][selectedScen] : {};
+             let pkeys = Object.keys(scObj || {}).sort();
+             
+             if (selectedScen === 'historical') {
+                 pkeys = pkeys.filter(p => p === '1981_2010' || p === '1991_2020');
+             } else {
+                 pkeys = Array.from(new Set(pkeys.map(k => k.substring(0, 9))));
+                 pkeys.sort((a, b) => {
+                     if (a === '2021_2100') return -1;
+                     if (b === '2021_2100') return 1;
+                     return a.localeCompare(b);
+                 });
+             }
+
+             let targetPeriode = initialPeriode || document.getElementById('compare-periode').dataset.value;
+             if (targetPeriode && targetPeriode.length > 9) targetPeriode = targetPeriode.substring(0, 9);
+             if (!pkeys.includes(targetPeriode)) {
+                 targetPeriode = pkeys.length > 0 ? pkeys[0] : '';
+             }
+
+             renderComparePills('compare-periode', 'compare-periode-radio', pkeys, targetPeriode, (per) => {
+                 updateCompareDatasets(per, null, null);
+                 window.applyCompare();
+             });
+             updateCompareDatasets(targetPeriode, initialDataset, initialModel);
+        };
+
+        let defaultDataset = document.getElementById('sel-dataset').value;
+        let defaultModel = document.getElementById('sel-model').value;
+
+        renderComparePills('compare-skenario', 'compare-skenario-radio', scens, defaultScen, (scen) => { 
+            updateComparePeriods(scen, null, null, null); 
+            window.applyCompare(); 
+        });
+        updateComparePeriods(defaultScen, defaultPeriode, defaultDataset, defaultModel);
+
+        const btn = document.querySelector('[title="Compare this variable with other project"]');
+        const fsBtn = document.querySelector('[title="Enter Full Screen"]') || document.querySelector('[title="Exit Full Screen"]');
+        if (btn) {
+             const rect = btn.getBoundingClientRect();
+             let topPos = rect.top;
+             if (fsBtn) {
+                 const fsRect = fsBtn.getBoundingClientRect();
+                 topPos = fsRect.top;
+             }
+             modal.style.top = topPos + 'px';
+             modal.style.left = (rect.left - 290 - 15) + 'px'; // 280px width + padding/border + gap
+        } else {
+             modal.style.top = '200px';
+             modal.style.left = '50%';
+        }
+
+        modal.style.display = 'block';
+        window.applyCompare();
+      }
+
+      window.applyCompare = async function() {
+        isComparing = true;
+        
+        const btn = document.querySelector('[title="Compare this variable with other project"]');
+        if (btn) {
+           btn.style.backgroundColor = '#2563eb';
+           btn.style.color = 'white';
+        }
+
+        const sliderWrap = document.getElementById('compare-slider-wrap');
+        if (sliderWrap) {
+            sliderWrap.style.display = 'flex';
+            const mapRect = document.getElementById('map').getBoundingClientRect();
+            const header = document.getElementById('map-header');
+            const headerHeight = header ? header.offsetHeight : 0;
+            const cx = mapRect.left + (mapRect.width / 2);
+            sliderWrap.style.left = cx + 'px';
+            sliderWrap.style.top = (mapRect.top + headerHeight) + 'px';
+            sliderWrap.style.bottom = (window.innerHeight - mapRect.bottom) + 'px';
+        }
+
+        const cScen = document.getElementById('compare-skenario').dataset.value;
+        const cPer = document.getElementById('compare-periode').dataset.value;
+        const jenis = document.getElementById('sel-jenis').value;
+        
+        let actualPeriode = cPer;
+        if ((jenis === 'CHANGE' || jenis === 'VALUE') && cScen !== 'historical') {
+            actualPeriode = cPer + '_' + activeRef;
+        }
+
+        const params = new URLSearchParams({
+           kategori: document.getElementById('sel-kategori').value,
+           variabel: document.getElementById('sel-variabel').value,
+           skenario: cScen,
+           periode: actualPeriode,
+           jenis: jenis,
+           model: document.getElementById('compare-model').dataset.value,
+           mask_indo: window.isMaskIndo ? '1' : '0'
+        });
+
+        try {
+            const res = await fetch('/api/data?' + params.toString());
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+            window.lastCompareData = data;
+            if (typeof window.drawCompareOverlay === 'function') {
+                window.drawCompareOverlay(data);
+            }
+
+            const avgValEl = document.getElementById('indonesia-average-val');
+            const avgLoadingEl = document.getElementById('indonesia-average-loading');
+            if (avgValEl && avgLoadingEl) {
+                avgValEl.style.display = 'none';
+                avgLoadingEl.style.display = 'block';
+                fetch('/api/indonesia_average?' + params.toString())
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.average !== undefined) {
+                            const unit = data.unit || document.getElementById('lbl-unit').textContent || '';
+                            const orig = avgValEl.getAttribute('data-orig') || '-';
+                            avgValEl.innerHTML = `<span style="font-size:0.85rem;color:#64748b;font-weight:400">Utama:</span> ${orig} <br><span style="font-size:0.85rem;color:#64748b;font-weight:400">Banding:</span> ${d.average.toFixed(2)} ${unit}`;
+                        }
+                    })
+                    .catch(console.error)
+                    .finally(() => {
+                        avgValEl.style.display = 'block';
+                        avgLoadingEl.style.display = 'none';
+                    });
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert(err.message || "Error fetching comparison data");
+            isComparing = false;
+            if (sliderWrap) sliderWrap.style.display = 'none';
+            if (btn) { btn.style.backgroundColor = ''; btn.style.color = ''; }
+        }
+      }
+
+      const btnCancel = document.getElementById('btn-compare-cancel');
+      if (btnCancel) btnCancel.addEventListener('click', () => {
+          document.getElementById('compareModal').style.display = 'none';
+      });
+      const btnApply = document.getElementById('btn-compare-apply');
+      if (btnApply) btnApply.addEventListener('click', window.applyCompare);
+
+      const sliderWrap = document.getElementById('compare-slider-wrap');
+      let isDragging = false;
+      if (sliderWrap) {
+          sliderWrap.addEventListener('mousedown', (e) => {
+              isDragging = true;
+              e.preventDefault();
+              document.body.style.cursor = 'ew-resize';
+              document.body.style.userSelect = 'none';
+              document.getElementById('map').style.pointerEvents = 'none';
+          });
+          document.addEventListener('mousemove', (e) => {
+              if (!isDragging || !isComparing) return;
+              updateCompareClip(e.clientX);
+          });
+          document.addEventListener('mouseup', () => {
+              isDragging = false;
+              document.body.style.cursor = '';
+              document.body.style.userSelect = '';
+              document.getElementById('map').style.pointerEvents = 'auto';
+          });
+          window.addEventListener('resize', () => {
+              if (!isComparing) return;
+              const mapRect = document.getElementById('map').getBoundingClientRect();
+              const header = document.getElementById('map-header');
+              const headerHeight = header ? header.offsetHeight : 0;
+              sliderWrap.style.top = (mapRect.top + headerHeight) + 'px';
+              sliderWrap.style.bottom = (window.innerHeight - mapRect.bottom) + 'px';
+          });
+      }
+
+      window.drawCompareOverlay = function(data) {
+            if (!data) return;
+            if (compareOverlay) map.removeLayer(compareOverlay);
+
+            const lat = data.lat;
+            const lon = data.lon;
+            const z = data.z;
+            const nLat = lat.length, nLon = lon.length;
+            const canvas = document.createElement('canvas');
+            canvas.width = nLon;
+            canvas.height = nLat;
+            const ctx = canvas.getContext('2d');
+            const imgData = ctx.createImageData(nLon, nLat);
+
+            const isDiscrete = document.getElementById('chk-discrete') && document.getElementById('chk-discrete').checked;
+            const numBins = document.getElementById('in-bins') ? parseInt(document.getElementById('in-bins').value) || 8 : 8;
+
+            const zmin = parseFloat(document.getElementById('in-min').value);
+            const zmax = parseFloat(document.getElementById('in-max').value);
+
+            for (let row = 0; row < nLat; row++) {
+              const latIdx = nLat - 1 - row;
+              for (let col = 0; col < nLon; col++) {
+                const val = z[latIdx][col];
+                const idx = (row * nLon + col) * 4;
+
+                if (val === null || val === undefined) {
+                  imgData.data[idx] = 0;
+                  imgData.data[idx + 1] = 0;
+                  imgData.data[idx + 2] = 0;
+                  imgData.data[idx + 3] = 0;
+                } else {
+                  const t = (val - zmin) / (zmax - zmin);
+                  const c = colormap(currentPalette, t, isDiscrete, numBins);
+                  imgData.data[idx] = c[0];
+                  imgData.data[idx + 1] = c[1];
+                  imgData.data[idx + 2] = c[2];
+                  imgData.data[idx + 3] = 255;
+                }
+              }
+            }
+            ctx.putImageData(imgData, 0, 0);
+
+            const imageUrl = canvas.toDataURL('image/png');
+            const bounds = [[lat[0], lon[0]], [lat[nLat - 1], lon[nLon - 1]]];
+            
+            const currentOpacity = parseFloat(document.getElementById('in-opacity').value) || 0.8;
+
+            compareOverlay = L.imageOverlay(imageUrl, bounds, { 
+                opacity: currentOpacity, 
+                zIndex: 10,
+                className: window.isPixelated ? 'pixelated-layer' : '' 
+            }).addTo(map);
+            
+            compareOverlay.on('load', function() {
+                const sliderWrap = document.getElementById('compare-slider-wrap');
+                if (sliderWrap) updateCompareClip(parseFloat(sliderWrap.style.left) || window.innerWidth/2);
+            });
+      };
+
       loadOptions();
     });
   </script>
-  
+
   <!-- Dataset Selection Modal -->
-  <div id="ds-modal-overlay" onclick="closeDsModal()" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: transparent; z-index: 9999; align-items: center; justify-content: center;">
-     <div id="ds-modal-content" onclick="event.stopPropagation()" style="background: #fff; border-radius: 0; width: 600px; max-width: 95%; height: 400px; display: flex; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #1e3a8a;">
-        <div id="ds-modal-sidebar" style="width: 220px; border-right: 1px solid #1e3a8a; background: #f9fafb; display: flex; flex-direction: column;">
-            <div style="padding: 0 16px; border-bottom: 1px solid #1e3a8a; font-weight: 600; color: var(--text); font-size: 1.05rem; height: 56px; box-sizing: border-box; display: flex; align-items: center;">
-               Categories
-            </div>
-            <div style="padding: 16px; flex: 1; overflow-y: auto;">
-               <div id="ds-modal-cat-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
-            </div>
+  <div id="ds-modal-overlay" onclick="closeDsModal()"
+    style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: transparent; z-index: 9999; align-items: center; justify-content: center;">
+    <div id="ds-modal-content" onclick="event.stopPropagation()"
+      style="background: #fff; border-radius: 0; width: 600px; max-width: 95%; height: 400px; display: flex; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #1e3a8a;">
+      <div id="ds-modal-sidebar"
+        style="width: 220px; border-right: 1px solid #1e3a8a; background: #f9fafb; display: flex; flex-direction: column;">
+        <div
+          style="padding: 0 16px; border-bottom: 1px solid #1e3a8a; font-weight: 600; color: var(--text); font-size: 1.05rem; height: 56px; box-sizing: border-box; display: flex; align-items: center;">
+          Categories
         </div>
-        <div id="ds-modal-main" style="flex: 1; display: flex; flex-direction: column; background: #fff; position: relative;">
-            <div style="position: absolute; top: 16px; right: 16px; cursor: pointer; color: var(--muted);" onclick="closeDsModal()">
-               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </div>
-            <div style="padding: 0 40px 0px 40px; border-bottom: 1px solid #1e3a8a; height: 56px; box-sizing: border-box; display: flex; align-items: center;">
-               <span style="font-weight: 600; color: #1e3a8a;">Select Dataset</span>
-            </div>
-            <div id="ds-modal-grid" style="flex: 1; padding: 24px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
-            </div>
+        <div style="padding: 16px; flex: 1; overflow-y: auto;">
+          <div id="ds-modal-cat-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
-     </div>
+      </div>
+      <div id="ds-modal-main"
+        style="flex: 1; display: flex; flex-direction: column; background: #fff; position: relative;">
+        <div style="position: absolute; top: 16px; right: 16px; cursor: pointer; color: var(--muted);"
+          onclick="closeDsModal()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </div>
+        <div
+          style="padding: 0 40px 0px 40px; border-bottom: 1px solid #1e3a8a; height: 56px; box-sizing: border-box; display: flex; align-items: center;">
+          <span style="font-weight: 600; color: #1e3a8a;">Select Dataset</span>
+        </div>
+        <div id="ds-modal-grid"
+          style="flex: 1; padding: 24px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Variable Selection Modal -->
-  <div id="var-modal-overlay" onclick="closeVarModal()" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: transparent; z-index: 9999; align-items: center; justify-content: center;">
-     <div id="var-modal-content" onclick="event.stopPropagation()" style="background: #fff; border-radius: 0; width: 850px; max-width: 95%; height: 500px; display: flex; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #1e3a8a;">
-        <div id="var-modal-sidebar" style="width: 220px; border-right: 1px solid #1e3a8a; background: #f9fafb; display: flex; flex-direction: column;">
-            <div style="padding: 0 16px; border-bottom: 1px solid #1e3a8a; font-weight: 600; color: var(--text); font-size: 1.05rem; height: 56px; box-sizing: border-box; display: flex; align-items: center;">
-               Categories
-            </div>
-            <div style="padding: 16px; flex: 1; overflow-y: auto;">
-               <div id="var-category-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
-            </div>
+  <div id="var-modal-overlay" onclick="closeVarModal()"
+    style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: transparent; z-index: 9999; align-items: center; justify-content: center;">
+    <div id="var-modal-content" onclick="event.stopPropagation()"
+      style="background: #fff; border-radius: 0; width: 850px; max-width: 95%; height: 500px; display: flex; box-shadow: 0 4px 12px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid #1e3a8a;">
+      <div id="var-modal-sidebar"
+        style="width: 220px; border-right: 1px solid #1e3a8a; background: #f9fafb; display: flex; flex-direction: column;">
+        <div
+          style="padding: 0 16px; border-bottom: 1px solid #1e3a8a; font-weight: 600; color: var(--text); font-size: 1.05rem; height: 56px; box-sizing: border-box; display: flex; align-items: center;">
+          Categories
         </div>
-        <div id="var-modal-main" style="flex: 1; display: flex; flex-direction: column; background: #fff; position: relative;">
-            <div style="position: absolute; top: 16px; right: 16px; cursor: pointer; color: var(--muted);" onclick="closeVarModal()">
-               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </div>
-            <div style="padding: 0 40px 0px 40px; border-bottom: 1px solid #1e3a8a; height: 56px; box-sizing: border-box; display: flex; align-items: flex-end;">
-               <div id="var-index-tabs" style="display: flex; gap: 32px; overflow-x: auto; width: 100%;">
-               </div>
-            </div>
-            <div id="var-grid-wrap" style="flex: 1; padding: 24px; overflow-y: auto;">
-                <div id="var-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--border); border-left: 1px solid var(--border); align-content: start;">
-                </div>
-            </div>
+        <div style="padding: 16px; flex: 1; overflow-y: auto;">
+          <div id="var-category-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
-     </div>
+      </div>
+      <div id="var-modal-main"
+        style="flex: 1; display: flex; flex-direction: column; background: #fff; position: relative;">
+        <div style="position: absolute; top: 16px; right: 16px; cursor: pointer; color: var(--muted);"
+          onclick="closeVarModal()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </div>
+        <div
+          style="padding: 0 40px 0px 40px; border-bottom: 1px solid #1e3a8a; height: 56px; box-sizing: border-box; display: flex; align-items: flex-end;">
+          <div id="var-index-tabs" style="display: flex; gap: 32px; overflow-x: auto; width: 100%;">
+          </div>
+        </div>
+        <div id="var-grid-wrap" style="flex: 1; padding: 24px; overflow-y: auto;">
+          <div id="var-grid"
+            style="display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--border); border-left: 1px solid var(--border); align-content: start;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Comparison Modal -->
+  <div id="compareModal" style="display: none; position: fixed; z-index: 2000;">
+    <div style="background: white; border-radius: 0; width: 280px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-family: 'Inter', sans-serif; border: 1.5px solid var(--accent); position: relative;">
+      <div style="position: absolute; top: 12px; right: 12px; cursor: pointer; color: #64748b;" onclick="document.getElementById('compareModal').style.display='none';">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </div>
+      <h3 style="margin-top: 0; color: #1e3a8a; font-size: 1.1rem; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">Compare</h3>
+      
+      <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0;">
+        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #334155; margin-bottom: 5px;">Skenario</label>
+        <div id="compare-skenario" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+      </div>
+
+      <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0;">
+        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #334155; margin-bottom: 5px;">Periode</label>
+        <div id="compare-periode" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+      </div>
+      <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0;">
+        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #334155; margin-bottom: 5px;">Dataset</label>
+        <div id="compare-dataset" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+      </div>
+      
+      <div style="margin-bottom: 5px;">
+        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #334155; margin-bottom: 5px;">Model</label>
+        <div id="compare-model" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Slider -->
+  <div id="compare-slider-wrap" style="display:none; position:fixed; top:0; bottom:0; left:50%; width:40px; margin-left:-20px; z-index:1500; cursor:ew-resize; flex-direction:column; justify-content:center; align-items:center;">
+    <div style="position:absolute; width:2px; height:100%; background:white; box-shadow:0 0 5px rgba(0,0,0,0.5);"></div>
+    <div style="width:36px; height:36px; background:white; border-radius:50%; box-shadow:0 0 5px rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:1501;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:-8px;">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </div>
   </div>
 </body>
+
 </html>

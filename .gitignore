@@ -94,3 +94,5 @@ desktop.ini
 
 /proyeksi_curah_hujan
 /proyeksi_suhu
+/static/spasial/*
+/static/geojson/*

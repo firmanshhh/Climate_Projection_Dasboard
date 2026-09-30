@@ -1,8 +1,18 @@
 {
   "dataset_types": {
-    "Climate projections": ["CMIP6", "Ensemble", "CORDEX"],
-    "Reanalyses": ["ERA5", "Reanalysis"],
-    "Observations": ["Observasi", "Observations"]
+    "Climate projections": [
+      "CMIP6",
+      "Ensemble",
+      "CORDEX"
+    ],
+    "Reanalyses": [
+      "ERA5",
+      "Reanalysis"
+    ],
+    "Observations": [
+      "Observasi",
+      "Observations"
+    ]
   },
   "dataset_categories": {
     "NEX-GDDP-CMIP": [

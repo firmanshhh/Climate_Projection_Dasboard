@@ -144,33 +144,46 @@ def build_index(root):
         log.warning("DATA_DIR '%s' tidak ditemukan. Jalankan dengan DATA_DIR yang benar.", root)
         return index
 
-    pattern = re.compile(r"^(?P<model>.+?)_(?P<jenis>[A-Za-z0-9]+)_(?P<periode>\d{4}_\d{4})\.nc$")
+    # Pattern sekarang bisa mendeteksi _2031_2060_1981_2010
+    pattern = re.compile(r"^(?P<model>.+?)_(?P<jenis>[A-Za-z0-9]+)_(?P<periode>\d{4}_\d{4}(?:_\d{4}_\d{4})?)\.nc$")
 
-    def add_file(variabel, skenario, periode, jenis, fname, full_path):
+    def add_file(variabel, skenario, periode, aggregasi, jenis, fname, full_path):
         m = pattern.match(fname)
-        model = m.group("model") if m else fname.replace(".nc", "")
-        periode_key = m.group("periode") if m else periode
+        if m:
+            model = m.group("model")
+            file_periode = m.group("periode")
+            if file_periode:
+                periode = file_periode
+        else:
+            model = fname.replace(".nc", "")
+            
+        # Untuk dictionary, kita masukkan dengan hierarchy: var -> skenario -> periode -> aggregasi -> jenis -> model
         index.setdefault(variabel, {}) \
              .setdefault(skenario, {}) \
-             .setdefault(periode_key, {}) \
+             .setdefault(periode, {}) \
+             .setdefault(aggregasi, {}) \
              .setdefault(jenis, {})[model] = full_path
 
     def walk_periode_jenis_model(variabel, skenario, periode_root):
-        """Dari level PERIODE ke bawah: PERIODE/JENIS/MODEL.nc"""
+        """Dari level PERIODE ke bawah: PERIODE/AGGREGASI/JENIS/MODEL.nc"""
         if not os.path.isdir(periode_root):
             return
         for periode in sorted(os.listdir(periode_root)):
             per_path = os.path.join(periode_root, periode)
             if not os.path.isdir(per_path):
                 continue
-            for jenis in sorted(os.listdir(per_path)):
-                jenis_path = os.path.join(per_path, jenis)
-                if not os.path.isdir(jenis_path):
+            for aggregasi in sorted(os.listdir(per_path)):
+                agg_path = os.path.join(per_path, aggregasi)
+                if not os.path.isdir(agg_path):
                     continue
-                for fname in sorted(os.listdir(jenis_path)):
-                    if fname.lower().endswith(".nc"):
-                        add_file(variabel, skenario, periode, jenis,
-                                  fname, os.path.join(jenis_path, fname))
+                for jenis in sorted(os.listdir(agg_path)):
+                    jenis_path = os.path.join(agg_path, jenis)
+                    if not os.path.isdir(jenis_path):
+                        continue
+                    for fname in sorted(os.listdir(jenis_path)):
+                        if fname.lower().endswith(".nc"):
+                            add_file(variabel, skenario, periode, aggregasi, jenis,
+                                      fname, os.path.join(jenis_path, fname))
 
     for variabel in sorted(os.listdir(root)):
         var_path = os.path.join(root, variabel)
@@ -202,7 +215,7 @@ def build_index(root):
 
 
 @lru_cache(maxsize=256)
-def read_nc(path):
+def read_nc(path, mask_indo=False):
     """Baca file NetCDF, ambil lat/lon dan variabel data pertama (cached)."""
     ds = xr.open_dataset(path)
     data_vars = list(ds.data_vars)
@@ -212,7 +225,31 @@ def read_nc(path):
 
     lat = ds["lat"].values if "lat" in ds.coords else ds["latitude"].values
     lon = ds["lon"].values if "lon" in ds.coords else ds["longitude"].values
-    z   = ds[varname].values
+    
+    da = ds[varname]
+    if mask_indo:
+        try:
+            import rioxarray
+            import geopandas as gpd
+            from plot_map import load_indonesia_geojson
+            gdf = load_indonesia_geojson()
+            
+            rename_dict = {}
+            if 'latitude' in da.dims: rename_dict['latitude'] = 'y'
+            elif 'lat' in da.dims: rename_dict['lat'] = 'y'
+            if 'longitude' in da.dims: rename_dict['longitude'] = 'x'
+            elif 'lon' in da.dims: rename_dict['lon'] = 'x'
+            
+            da_temp = da.rename(rename_dict) if rename_dict else da
+            da_temp = da_temp.rio.write_crs("epsg:4326")
+            # drop=False ensures the grid shape stays the same!
+            da_clipped = da_temp.rio.clip(gdf.geometry, gdf.crs, drop=False)
+            z = da_clipped.values
+        except Exception as e:
+            log.warning("Gagal mask indonesia: %s", e)
+            z = da.values
+    else:
+        z = da.values
 
     # Pastikan urutan dimensi (lat, lon)
     if z.shape != (len(lat), len(lon)):
@@ -251,6 +288,97 @@ def api_options():
     """Kembalikan seluruh pohon metadata (untuk mengisi dropdown bertingkat)."""
     return jsonify(INDEX)
 
+from flask import send_file
+import plot_map
+
+@app.route("/api/export_map", methods=["POST"])
+def api_export_map():
+    req = request.json
+    kategori = req.get("kategori")
+    variabel = req.get("variabel")
+    skenario = req.get("skenario")
+    periode = req.get("periode")
+    jenis = req.get("jenis")
+    model = req.get("model")
+    aggregasi = req.get("aggregasi", "annual")
+    mask_indo = str(req.get("mask_indo", "0")) == "1"
+
+    try:
+        path = INDEX[kategori][variabel][skenario][periode][aggregasi][jenis][model]
+    except KeyError:
+        return jsonify({"error": "Data path not found."}), 404
+
+    try:
+        buf = plot_map.generate_map_plot(
+            nc_path=path,
+            var_name=variabel,
+            time_idx=req.get("time_idx", 0),
+            vmin=req.get("vmin", 0),
+            vmax=req.get("vmax", 100),
+            palette_hex_list=req.get("palette_hex_list", []),
+            is_discrete=req.get("is_discrete", False),
+            num_bins=req.get("num_bins", 8),
+            title=req.get("title", ""),
+            subtitle=req.get("subtitle", ""),
+            unit=req.get("unit", ""),
+            quantity=jenis.title() if jenis else "Klimatologi",
+            mask_indo=mask_indo
+        )
+        return send_file(buf, mimetype='image/png', as_attachment=True, download_name='export.png')
+    except Exception as e:
+        log.exception("Error exporting map")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/export_geotiff", methods=["POST"])
+def api_export_geotiff():
+    req = request.json
+    kategori = req.get("kategori")
+    variabel = req.get("variabel")
+    skenario = req.get("skenario")
+    periode = req.get("periode")
+    jenis = req.get("jenis")
+    model = req.get("model")
+    aggregasi = req.get("aggregasi", "annual")
+    mask_indo = str(req.get("mask_indo", "0")) == "1"
+
+    try:
+        path = INDEX[kategori][variabel][skenario][periode][aggregasi][jenis][model]
+    except KeyError:
+        return jsonify({"error": "Data path not found."}), 404
+
+    try:
+        import zipfile
+        import io
+        
+        zip_buf = io.BytesIO()
+        with zipfile.ZipFile(zip_buf, 'w', zipfile.ZIP_DEFLATED) as zf:
+            # Add NC file
+            zf.write(path, arcname=f"{model}_{jenis}_{periode}.nc")
+            
+            # Add TIF file
+            tif_buf = plot_map.generate_geotiff(
+                nc_path=path,
+                var_name=variabel,
+                time_idx=req.get("time_idx", 0),
+                mask_indo=mask_indo
+            )
+            zf.writestr(f"{model}_{jenis}_{periode}.tif", tif_buf.read())
+            
+            # Add CSV file
+            csv_buf = plot_map.generate_csv(
+                nc_path=path,
+                var_name=variabel,
+                time_idx=req.get("time_idx", 0),
+                mask_indo=mask_indo
+            )
+            zf.writestr(f"{model}_{jenis}_{periode}.csv", csv_buf.read())
+            
+        zip_buf.seek(0)
+        return send_file(zip_buf, mimetype='application/zip', as_attachment=True, download_name=f"{model}_{jenis}_{periode}.zip")
+    except Exception as e:
+        log.exception("Error exporting zip")
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route("/api/color_scales")
 def api_color_scales():
@@ -266,14 +394,15 @@ def api_data():
     periode = request.args.get("periode")
     jenis = request.args.get("jenis")
     model = request.args.get("model")
+    aggregasi = request.args.get("aggregasi", "annual")
 
     try:
-        path = INDEX[kategori][variabel][skenario][periode][jenis][model]
+        path = INDEX[kategori][variabel][skenario][periode][aggregasi][jenis][model]
     except KeyError:
         return jsonify({"error": "Kombinasi pilihan tidak ditemukan di data."}), 404
 
     try:
-        payload = read_nc(path)
+        payload = read_nc(path, mask_indo=request.args.get('mask_indo') == '1')
     except Exception as e:
         log.exception("Gagal membaca %s", path)
         return jsonify({"error": f"Gagal membaca file: {e}"}), 500
@@ -291,6 +420,36 @@ def api_data():
     payload["var_label"] = var_config.get("name", variabel)
 
     return jsonify(payload)
+
+
+@app.route("/api/indonesia_average")
+def api_indonesia_average():
+    kategori = request.args.get("kategori")
+    variabel = request.args.get("variabel")
+    skenario = request.args.get("skenario")
+    periode = request.args.get("periode")
+    jenis = request.args.get("jenis")
+    model = request.args.get("model")
+    aggregasi = request.args.get("aggregasi", "annual")
+    time_idx = int(request.args.get("time_idx", 0))
+    mask_indo = request.args.get("mask_indo") == '1'
+
+    try:
+        path = INDEX[kategori][variabel][skenario][periode][aggregasi][jenis][model]
+    except KeyError:
+        return jsonify({"error": "Data path not found."}), 404
+
+    try:
+        avg_val = plot_map.get_spatial_average(
+            nc_path=path,
+            var_name=variabel,
+            time_idx=time_idx,
+            mask_indo=mask_indo
+        )
+        return jsonify({"average": avg_val})
+    except Exception as e:
+        log.exception("Error calculating Indonesia average")
+        return jsonify({"error": str(e)}), 500
 
 
 ensure_plotly_js()
